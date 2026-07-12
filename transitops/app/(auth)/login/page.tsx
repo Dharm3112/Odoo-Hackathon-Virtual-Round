@@ -1,17 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Eye, EyeOff, Loader2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { cn } from "@/lib/utils";
 
 const ROLES = [
   { name: "Fleet Manager", icon: "account_tree" },
@@ -34,9 +31,9 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [formError, setFormError] = useState("");
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Form submitted, fetching CSRF token...");
+    console.log("Form submitted", { email, role: role.name, rememberMe });
     setIsLoading(true);
     setFormError("");
 
@@ -59,65 +56,87 @@ export default function LoginPage() {
     }
 
     try {
-      // Fetch CSRF token
+      // Use fetch directly to the NextAuth callback endpoint
       console.log("Fetching CSRF token...");
-      const csrfRes = await fetch("/api/auth/csrf");
-      const csrfData = await csrfRes.json();
-      const csrfToken = csrfData.csrfToken;
+      const csrfRes = await fetch("/api/auth/csrf", { credentials: "same-origin" });
+      if (!csrfRes.ok) throw new Error("Failed to get CSRF token");
+      const { csrfToken } = await csrfRes.json();
       console.log("Got CSRF token:", csrfToken);
 
-      // Submit credentials with CSRF token
       console.log("Submitting credentials...");
       const res = await fetch("/api/auth/callback/credentials", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        credentials: "include",
+        credentials: "same-origin",
         body: new URLSearchParams({
           email,
           password,
           role: role.name,
           rememberMe: rememberMe.toString(),
           csrfToken,
-          redirect: "false",
-        }),
+          callbackUrl,
+          json: "true",
+        }).toString(),
       });
 
       console.log("Response status:", res.status);
+      console.log("Response URL:", res.url);
+
+      if (res.redirected) {
+        if (res.url.includes("/api/auth/signin?csrf=true")) {
+          throw new Error("CSRF validation failed. Please refresh and try again.");
+        }
+        console.log("Login successful (redirected), redirecting to:", callbackUrl);
+        router.push(callbackUrl);
+        router.refresh();
+        return;
+      }
+
+      // Handle JSON response (when json=true)
       const data = await res.json();
       console.log("Response data:", data);
 
-      if (res.ok && data.url && !data.error) {
+      // Check for redirect URL in JSON response
+      if (data.url) {
+        console.log("Login successful (JSON redirect), redirecting to:", data.url);
+        router.push(data.url);
+        router.refresh();
+        return;
+      }
+
+      if (res.ok && !data.error) {
         console.log("Login successful, redirecting to:", callbackUrl);
         router.push(callbackUrl);
         router.refresh();
       } else {
-        console.log("Login failed:", data);
-        const errorMsg = data.error || "Invalid email or password. Please try again.";
-        if (errorMsg.includes("locked")) {
-          setFormError(errorMsg);
-        } else if (errorMsg.includes("role")) {
-          setFormError("Invalid role selected for this account");
-        } else {
-          setFormError(errorMsg);
-        }
+        throw new Error(data.error || "Invalid email or password. Please try again.");
       }
     } catch (err) {
       console.error("Login exception:", err);
-      setFormError("An unexpected error occurred. Please try again.");
+      const msg = err instanceof Error ? err.message : "An unexpected error occurred. Please try again.";
+      if (msg.includes("locked")) {
+        setFormError(msg);
+      } else if (msg.includes("role")) {
+        setFormError("Invalid role selected for this account");
+      } else if (msg.includes("CSRF")) {
+        setFormError(msg);
+      } else {
+        setFormError("Invalid email or password. Please try again.");
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#0e0e0e] text-[#e5e2e1] font-sans antialiased overflow-hidden">
-      <main className="flex flex-col md:flex-row min-h-screen w-full">
+    <div className="min-h-screen bg-[#0e0e0e] text-[#e5e2e1] font-sans antialiased overflow-x-hidden">
+      <main className="flex flex-col md:flex-row min-h-screen w-full overflow-x-hidden">
         {/* Left Pane: Branding & Info */}
         <section className="w-full md:w-1/2 bg-[#000000] flex flex-col justify-center p-8 md:p-16 lg:p-24 relative overflow-hidden hidden md:block">
           <div className="relative z-10 max-w-lg mx-auto md:mx-0 w-full h-full flex flex-col justify-center gap-12">
             {/* Logo & Tagline */}
-            <div>
-              <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight text-white mb-4" style={{ letterSpacing: "-0.04em" }}>
+            <div className="overflow-hidden">
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white mb-4 overflow-hidden" style={{ letterSpacing: "-0.04em" }}>
                 TransitOps
               </h1>
               <p className="text-lg text-[#c4c7c8] font-normal">Smart Transport Operations Platform</p>
