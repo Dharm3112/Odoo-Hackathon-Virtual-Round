@@ -2,116 +2,83 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useAuth } from "@/components/providers/auth-provider";
-import { MODULE_LABELS, MODULE_ORDER, type Module } from "@/lib/rbac";
 import { cn } from "@/lib/utils";
-import { Truck as TruckIcon, LayoutDashboard, Users, MapPin, Wrench, Fuel, BarChart3, Settings, ChevronLeft, ChevronRight, LogOut } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { useState } from "react";
 
-const ICONS: Record<Module, React.ComponentType<{ className?: string }>> = {
-  dashboard: LayoutDashboard,
-  fleet: TruckIcon,
-  drivers: Users,
-  trips: MapPin,
-  maintenance: Wrench,
-  fuel: Fuel,
-  reports: BarChart3,
-  settings: Settings,
-};
+const navItems = [
+  { href: "/dashboard", icon: "dashboard", label: "Dashboard" },
+  { href: "/fleet", icon: "local_shipping", label: "Fleet" },
+  { href: "/drivers", icon: "badge", label: "Drivers" },
+  { href: "/trips", icon: "route", label: "Trips" },
+  { href: "/maintenance", icon: "build", label: "Maintenance" },
+  { href: "/fuel", icon: "local_gas_station", label: "Fuel & Expenses" },
+  { href: "/analytics", icon: "analytics", label: "Analytics" },
+];
 
 export function Sidebar() {
   const pathname = usePathname();
-  const { visibleModules, user, isAuthenticated } = useAuth();
-  const [collapsed, setCollapsed] = useState(false);
-
-  if (!isAuthenticated) return null;
-
-  const handleLogout = () => {
-    fetch("/api/auth/logout", { method: "POST" }).then(() => {
-      window.location.href = "/login";
-    });
-  };
 
   return (
-    <TooltipProvider delayDuration={200}>
-      <aside
-        className={cn(
-          "fixed left-0 top-16 z-40 h-[calc(100vh-4rem)] border-r bg-sidebar transition-all duration-200",
-          collapsed ? "w-16" : "w-64"
-        )}
-      >
-        <div className="flex h-full flex-col">
-          <nav className="flex-1 space-y-1 p-2" aria-label="Main navigation">
-            {MODULE_ORDER.map((module) => {
-              if (!visibleModules.includes(module)) return null;
-              const { label, href, icon: IconName } = MODULE_LABELS[module];
-              const Icon = ICONS[module];
-              const isActive = pathname === href || pathname.startsWith(href + "/");
-
-              return (
-                <Tooltip key={module} disabled={!collapsed}>
-                  <TooltipTrigger asChild>
-                    <Link
-                      href={href}
-                      className={cn(
-                        "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-                        "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
-                        isActive && "bg-sidebar-accent text-sidebar-accent-foreground",
-                        collapsed && "justify-center"
-                      )}
-                      aria-current={isActive ? "page" : undefined}
-                    >
-                      <Icon className="h-5 w-5 flex-shrink-0" aria-hidden="true" />
-                      <TooltipContent side="right" align="center">
-                        <p>{label}</p>
-                      </TooltipContent>
-                      {!collapsed && <span className="truncate">{label}</span>}
-                    </Link>
-                  </TooltipTrigger>
-                </Tooltip>
-              );
-            })}
-          </nav>
-
-          <div className="border-t p-2">
-            <div className="flex items-center gap-3 px-3 py-2">
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate">{user?.name}</p>
-                <p className="text-xs text-muted-foreground truncate">
-                  {(user as any)?.role || "User"}
-                </p>
-              </div>
-              {!collapsed && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 ml-auto"
-                  onClick={handleLogout}
-                  title="Sign out"
-                >
-                  <LogOut className="h-4 w-4" />
-                </Button>
+    <aside className="fixed left-0 top-0 h-screen w-sidebar_width bg-surface-container border-r border-surface-variant z-50 flex flex-col pt-header_height hidden md:flex transition-all duration-200">
+      <div className="absolute top-0 left-0 w-full h-header_height flex items-center px-4 border-b border-surface-variant justify-center md:justify-start overflow-hidden">
+        <span className="material-symbols-outlined text-primary mr-2">alt_route</span>
+        <span className="font-headline-sm text-headline-sm font-bold text-primary tracking-tight md:block hidden">
+          TransitOps
+        </span>
+      </div>
+      <div className="flex-1 py-4 flex flex-col gap-1 overflow-y-auto hide-scrollbar items-center md:items-stretch px-2 md:px-0">
+        {navItems.map((item) => {
+          const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={cn(
+                "flex items-center px-0 md:px-6 py-3 transition-colors group justify-center md:justify-start w-10 md:w-auto h-10 md:h-auto rounded-lg md:rounded-none relative",
+                isActive
+                  ? "text-primary bg-surface-container-high md:border-l-2 md:border-primary md:bg-surface-container-highest"
+                  : "text-outline hover:text-primary hover:bg-surface-container-highest"
               )}
-            </div>
-          </div>
+              title={item.label}
+            >
+              <span
+                className={cn(
+                  "material-symbols-outlined text-[24px] md:text-[20px] md:mr-3 transition-transform group-hover:scale-110 md:group-hover:scale-100",
+                  isActive ? "icon-fill" : ""
+                )}
+              >
+                {item.icon}
+              </span>
+              <span className="font-label-md text-label-md uppercase tracking-wider hidden md:block">
+                {item.label}
+              </span>
+            </Link>
+          );
+        })}
+        <div className="mt-auto">
+          <Link
+            href="/settings"
+            className={cn(
+              "flex items-center px-0 md:px-6 py-3 transition-colors group justify-center md:justify-start w-10 md:w-auto h-10 md:h-auto rounded-lg md:rounded-none",
+              pathname.startsWith("/settings")
+                ? "text-primary bg-surface-container-high md:border-l-2 md:border-primary md:bg-surface-container-highest"
+                : "text-outline hover:text-primary hover:bg-surface-container-highest"
+            )}
+            title="Settings"
+          >
+            <span
+              className={cn(
+                "material-symbols-outlined text-[24px] md:text-[20px] md:mr-3 transition-transform group-hover:scale-110 md:group-hover:scale-100",
+                pathname.startsWith("/settings") ? "icon-fill" : ""
+              )}
+            >
+              settings
+            </span>
+            <span className="font-label-md text-label-md uppercase tracking-wider hidden md:block">
+              Settings
+            </span>
+          </Link>
         </div>
-
-        <Button
-          variant="ghost"
-          size="icon"
-          className={cn(
-            "absolute right-[-12px] top-4 z-50 h-8 w-8 rounded-full border bg-background shadow-md",
-            collapsed && "rotate-180"
-          )}
-          onClick={() => setCollapsed(!collapsed)}
-          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          aria-expanded={!collapsed}
-        >
-          {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-        </Button>
-      </aside>
-    </TooltipProvider>
+      </div>
+    </aside>
   );
 }

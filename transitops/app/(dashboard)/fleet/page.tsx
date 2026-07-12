@@ -1,28 +1,28 @@
 "use client";
 
-import { useState } from "react";
+import { useState } from "next";
 
-export default function DriversPage() {
-  const [activeTab, setActiveTab] = useState<"directory" | "safety">("directory");
+export default function FleetPage() {
+  const [activeTab, setActiveTab] = useState<"directory" | "specs">("directory");
 
   return (
     <div className="flex flex-col gap-margin max-w-[1600px] w-full mx-auto">
       
       {/* Top Header & Actions */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <h1 className="font-headline-md text-headline-md text-primary">Driver Management</h1>
+        <h1 className="font-headline-md text-headline-md text-primary">Vehicle Registry</h1>
         <div className="flex items-center gap-3">
           <div className="relative">
             <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">search</span>
             <input 
               type="text" 
-              placeholder="Search drivers..." 
+              placeholder="Search fleet..." 
               className="w-full md:w-64 bg-surface-container border border-outline-variant rounded text-on-surface text-body-sm pl-9 pr-3 py-2 focus:outline-none focus:border-primary transition-colors placeholder:text-outline-variant"
             />
           </div>
           <button className="flex items-center gap-1 bg-primary text-background px-4 py-2 rounded font-label-md text-label-md hover:bg-surface-tint transition-colors whitespace-nowrap">
-            <span className="material-symbols-outlined text-[18px] icon-fill">person_add</span>
-            Add Driver
+            <span className="material-symbols-outlined text-[18px] icon-fill">add_circle</span>
+            Add Vehicle
           </button>
         </div>
       </div>
@@ -37,11 +37,11 @@ export default function DriversPage() {
           {activeTab === "directory" && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-primary rounded-t-full"></div>}
         </button>
         <button 
-          onClick={() => setActiveTab("safety")}
-          className={`px-6 py-3 font-label-md text-label-md uppercase tracking-wider transition-colors relative ${activeTab === "safety" ? "text-primary" : "text-outline hover:text-on-surface"}`}
+          onClick={() => setActiveTab("specs")}
+          className={`px-6 py-3 font-label-md text-label-md uppercase tracking-wider transition-colors relative ${activeTab === "specs" ? "text-primary" : "text-outline hover:text-on-surface"}`}
         >
-          Safety & Compliance
-          {activeTab === "safety" && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-primary rounded-t-full"></div>}
+          Specifications
+          {activeTab === "specs" && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-primary rounded-t-full"></div>}
         </button>
       </div>
 
@@ -51,27 +51,21 @@ export default function DriversPage() {
             <table className="w-full text-left border-collapse min-w-[800px]">
               <thead>
                 <tr className="border-b border-surface-variant bg-surface-container-low text-outline font-label-sm text-label-sm uppercase tracking-wider">
-                  <th className="p-4 font-semibold w-12 text-center"></th>
-                  <th className="p-4 font-semibold">Name & ID</th>
+                  <th className="p-4 font-semibold">Vehicle ID & Type</th>
                   <th className="p-4 font-semibold">Status</th>
-                  <th className="p-4 font-semibold">Current Vehicle</th>
-                  <th className="p-4 font-semibold">License Expiry</th>
+                  <th className="p-4 font-semibold">Current Assignment</th>
+                  <th className="p-4 font-semibold">Odometer</th>
                   <th className="p-4 font-semibold text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="font-body-sm text-body-sm">
                 
-                {/* Driver 1 */}
+                {/* Vehicle 1 */}
                 <tr className="border-b border-surface-variant hover:bg-surface-container-highest transition-colors group">
-                  <td className="p-4 text-center">
-                    <div className="w-8 h-8 rounded-full bg-surface-variant mx-auto flex items-center justify-center border border-outline-variant overflow-hidden">
-                      <span className="material-symbols-outlined text-[20px] text-outline">person</span>
-                    </div>
-                  </td>
                   <td className="p-4">
                     <div className="flex flex-col">
-                      <span className="text-primary font-medium text-body-md">Alex Johnson</span>
-                      <span className="text-outline-variant text-[12px] font-mono-data">DRV-7492</span>
+                      <span className="text-primary font-medium text-body-md">TRK-12</span>
+                      <span className="text-outline-variant text-[12px]">Heavy Duty Truck</span>
                     </div>
                   </td>
                   <td className="p-4">
@@ -80,8 +74,13 @@ export default function DriversPage() {
                       ON TRIP
                     </span>
                   </td>
-                  <td className="p-4 text-on-surface">Van-03</td>
-                  <td className="p-4 text-on-surface">Oct 12, 2025</td>
+                  <td className="p-4">
+                    <div className="flex flex-col">
+                      <span className="text-on-surface">Sarah Connor</span>
+                      <span className="text-outline-variant text-[12px]">TRP-8493</span>
+                    </div>
+                  </td>
+                  <td className="p-4 font-mono-data text-on-surface">142,500 km</td>
                   <td className="p-4 text-right">
                     <button className="text-outline hover:text-primary transition-colors p-1" title="View Details">
                       <span className="material-symbols-outlined text-[20px]">more_vert</span>
@@ -89,17 +88,12 @@ export default function DriversPage() {
                   </td>
                 </tr>
 
-                {/* Driver 2 */}
+                {/* Vehicle 2 */}
                 <tr className="border-b border-surface-variant hover:bg-surface-container-highest transition-colors group">
-                  <td className="p-4 text-center">
-                    <div className="w-8 h-8 rounded-full bg-surface-variant mx-auto flex items-center justify-center border border-outline-variant overflow-hidden">
-                      <span className="material-symbols-outlined text-[20px] text-outline">person</span>
-                    </div>
-                  </td>
                   <td className="p-4">
                     <div className="flex flex-col">
-                      <span className="text-primary font-medium text-body-md">Sarah Connor</span>
-                      <span className="text-outline-variant text-[12px] font-mono-data">DRV-3810</span>
+                      <span className="text-primary font-medium text-body-md">VAN-03</span>
+                      <span className="text-outline-variant text-[12px]">Delivery Van</span>
                     </div>
                   </td>
                   <td className="p-4">
@@ -109,7 +103,7 @@ export default function DriversPage() {
                     </span>
                   </td>
                   <td className="p-4 text-outline-variant italic">Unassigned</td>
-                  <td className="p-4 text-on-surface">May 04, 2026</td>
+                  <td className="p-4 font-mono-data text-on-surface">87,200 km</td>
                   <td className="p-4 text-right">
                     <button className="text-outline hover:text-primary transition-colors p-1" title="View Details">
                       <span className="material-symbols-outlined text-[20px]">more_vert</span>
@@ -117,27 +111,22 @@ export default function DriversPage() {
                   </td>
                 </tr>
 
-                {/* Driver 3 */}
+                {/* Vehicle 3 */}
                 <tr className="border-b border-surface-variant hover:bg-surface-container-highest transition-colors group">
-                  <td className="p-4 text-center">
-                    <div className="w-8 h-8 rounded-full bg-surface-variant mx-auto flex items-center justify-center border border-outline-variant overflow-hidden">
-                      <span className="material-symbols-outlined text-[20px] text-outline">person</span>
-                    </div>
-                  </td>
                   <td className="p-4">
                     <div className="flex flex-col">
-                      <span className="text-primary font-medium text-body-md">Michael Chang</span>
-                      <span className="text-outline-variant text-[12px] font-mono-data">DRV-9122</span>
+                      <span className="text-primary font-medium text-body-md">TRK-08</span>
+                      <span className="text-outline-variant text-[12px]">Heavy Duty Truck</span>
                     </div>
                   </td>
                   <td className="p-4">
                     <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded border border-status-warning/20 bg-status-warning/10 text-status-warning font-label-sm text-[11px]">
                       <span className="w-1.5 h-1.5 rounded-full bg-status-warning"></span>
-                      EXPIRING SOON
+                      MAINTENANCE
                     </span>
                   </td>
-                  <td className="p-4 text-on-surface">TRK-08</td>
-                  <td className="p-4 text-status-warning font-medium">In 14 Days</td>
+                  <td className="p-4 text-outline-variant italic">In Shop</td>
+                  <td className="p-4 font-mono-data text-on-surface">215,400 km</td>
                   <td className="p-4 text-right">
                     <button className="text-outline hover:text-primary transition-colors p-1" title="View Details">
                       <span className="material-symbols-outlined text-[20px]">more_vert</span>
@@ -150,23 +139,9 @@ export default function DriversPage() {
         </div>
       )}
 
-      {activeTab === "safety" && (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-container_gap">
-          <div className="bg-surface-container border border-outline-variant rounded-lg p-6 flex flex-col items-center justify-center gap-2">
-            <span className="material-symbols-outlined text-4xl text-status-green icon-fill mb-2">check_circle</span>
-            <span className="font-headline-lg text-headline-lg text-primary">98%</span>
-            <span className="font-label-md text-label-md text-outline">Compliance Rate</span>
-          </div>
-          <div className="bg-surface-container border border-outline-variant rounded-lg p-6 flex flex-col items-center justify-center gap-2">
-            <span className="material-symbols-outlined text-4xl text-status-warning icon-fill mb-2">warning</span>
-            <span className="font-headline-lg text-headline-lg text-status-warning">3</span>
-            <span className="font-label-md text-label-md text-outline">Action Required</span>
-          </div>
-          <div className="bg-surface-container border border-outline-variant rounded-lg p-6 flex flex-col items-center justify-center gap-2">
-            <span className="material-symbols-outlined text-4xl text-status-blue icon-fill mb-2">timer</span>
-            <span className="font-headline-lg text-headline-lg text-primary">2,450</span>
-            <span className="font-label-md text-label-md text-outline">Safe Driving Hours</span>
-          </div>
+      {activeTab === "specs" && (
+        <div className="bg-surface-container border border-outline-variant rounded-lg p-6">
+          <p className="text-on-surface-variant">Vehicle specifications detailed view would go here.</p>
         </div>
       )}
     </div>
