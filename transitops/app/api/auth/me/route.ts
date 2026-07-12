@@ -2,6 +2,15 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { NextResponse } from "next/server";
 
+interface SessionUser {
+  id: string;
+  email: string;
+  name: string;
+  role?: string;
+  roleId?: number;
+  permissions?: Record<string, string>;
+}
+
 export async function GET() {
   const session = await getServerSession(authOptions);
 
@@ -9,14 +18,16 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const user = session.user as SessionUser;
+
   return NextResponse.json({
     user: {
-      id: session.user.id,
-      email: session.user.email,
-      name: session.user.name,
-      role: (session.user as any).role,
-      roleId: (session.user as any).roleId,
-      permissions: (session.user as any).permissions,
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role,
+      roleId: user.roleId,
+      permissions: user.permissions,
     },
   });
 }

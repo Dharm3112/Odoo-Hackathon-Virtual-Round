@@ -1,0 +1,462 @@
+<!DOCTYPE html><html class="dark" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>TransitOps - Reports &amp; Analytics</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary": "#c7c6c6",
+                        "surface-container-high": "#2a2a2a",
+                        "secondary-fixed-dim": "#c7c6c6",
+                        "on-surface": "#e5e2e1",
+                        "surface": "#131313",
+                        "on-tertiary-container": "#636565",
+                        "inverse-surface": "#e5e2e1",
+                        "on-primary-fixed-variant": "#454747",
+                        "surface-container-low": "#1c1b1b",
+                        "inverse-primary": "#5d5f5f",
+                        "on-secondary-container": "#b5b5b5",
+                        "tertiary-container": "#e2e2e2",
+                        "background": "#131313",
+                        "on-tertiary-fixed": "#1a1c1c",
+                        "surface-bright": "#393939",
+                        "on-tertiary-fixed-variant": "#454747",
+                        "primary-fixed": "#e2e2e2",
+                        "on-primary-fixed": "#1a1c1c",
+                        "error-container": "#93000a",
+                        "surface-dim": "#131313",
+                        "surface-container-highest": "#353534",
+                        "on-primary-container": "#636565",
+                        "tertiary-fixed": "#e2e2e2",
+                        "on-error-container": "#ffdad6",
+                        "on-error": "#690005",
+                        "tertiary-fixed-dim": "#c6c6c7",
+                        "tertiary": "#ffffff",
+                        "surface-container": "#201f1f",
+                        "on-secondary-fixed": "#1b1c1c",
+                        "on-surface-variant": "#c4c7c8",
+                        "on-secondary-fixed-variant": "#464747",
+                        "on-secondary": "#303031",
+                        "surface-tint": "#c6c6c7",
+                        "secondary-container": "#464747",
+                        "secondary-fixed": "#e3e2e2",
+                        "primary-fixed-dim": "#c6c6c7",
+                        "primary-container": "#e2e2e2",
+                        "surface-container-lowest": "#0e0e0e",
+                        "on-primary": "#2f3131",
+                        "error": "#ffb4ab",
+                        "surface-variant": "#353534",
+                        "outline": "#8e9192",
+                        "on-background": "#e5e2e1",
+                        "primary": "#ffffff",
+                        "outline-variant": "#444748",
+                        "inverse-on-surface": "#313030",
+                        "on-tertiary": "#2f3131"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "margin": "24px",
+                        "gutter": "16px",
+                        "sidebar_width": "240px", 
+                        "header_height": "56px",
+                        "container_gap": "12px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "mono-data": ["JetBrains Mono"],
+                        "label-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "headline-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["10px", { "lineHeight": "1", "letterSpacing": "0.08em", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-md": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "mono-data": ["13px", { "lineHeight": "1.4", "fontWeight": "400" }],
+                        "label-md": ["12px", { "lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "body-lg": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "body-sm": ["13px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "headline-sm": ["18px", { "lineHeight": "1.4", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: theme('colors.background');
+            color: theme('colors.on-background');
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        
+        /* Custom scrollbar for dark mode */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: theme('colors.surface-container-lowest');
+        }
+        ::-webkit-scrollbar-thumb {
+            background: theme('colors.surface-variant');
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: theme('colors.outline');
+        }
+        
+        /* Utility class for Material Icons */
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        /* Chart line gradients */
+        .chart-gradient-revenue {
+            background: linear-gradient(180deg, rgba(34, 197, 94, 0.2) 0%, rgba(34, 197, 94, 0) 100%);
+        }
+        .chart-gradient-cost {
+            background: linear-gradient(180deg, rgba(239, 68, 68, 0.2) 0%, rgba(239, 68, 68, 0) 100%);
+        }
+    </style>
+</head>
+<body class="flex h-screen w-full text-on-surface bg-background">
+<!-- SideNavBar (Mobile Hidden, Desktop SideNav) -->
+<nav class="hidden md:flex flex-col bg-surface-dim border-r border-outline-variant w-sidebar_width h-screen fixed left-0 top-0 transition-all duration-200 ease-in-out z-50">
+<!-- Brand -->
+<div class="h-header_height flex items-center px-6 border-b border-outline-variant shrink-0">
+<span class="material-symbols-outlined text-primary mr-3 text-[28px]" style="font-variation-settings: 'FILL' 1;">local_shipping</span>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm font-bold text-primary tracking-tight">TransitOps</span>
+</div>
+</div>
+<!-- Navigation Links -->
+<div class="flex-1 overflow-y-auto py-4 flex flex-col gap-1">
+<!-- Inactive -->
+<a class="flex items-center px-6 py-3 mx-2 rounded-DEFAULT text-outline hover:text-on-surface-variant hover:bg-surface-container-highest transition-colors group" href="#">
+<span class="material-symbols-outlined mr-4 group-hover:text-primary transition-colors">dashboard</span>
+<span class="font-body-sm text-body-sm">Dashboard</span>
+</a>
+<a class="flex items-center px-6 py-3 mx-2 rounded-DEFAULT text-outline hover:text-on-surface-variant hover:bg-surface-container-highest transition-colors group" href="#">
+<span class="material-symbols-outlined mr-4 group-hover:text-primary transition-colors">local_shipping</span>
+<span class="font-body-sm text-body-sm">Fleet</span>
+</a>
+<a class="flex items-center px-6 py-3 mx-2 rounded-DEFAULT text-outline hover:text-on-surface-variant hover:bg-surface-container-highest transition-colors group" href="#">
+<span class="material-symbols-outlined mr-4 group-hover:text-primary transition-colors">badge</span>
+<span class="font-body-sm text-body-sm">Drivers</span>
+</a>
+<a class="flex items-center px-6 py-3 mx-2 rounded-DEFAULT text-outline hover:text-on-surface-variant hover:bg-surface-container-highest transition-colors group" href="#">
+<span class="material-symbols-outlined mr-4 group-hover:text-primary transition-colors">route</span>
+<span class="font-body-sm text-body-sm">Trips</span>
+</a>
+<a class="flex items-center px-6 py-3 mx-2 rounded-DEFAULT text-outline hover:text-on-surface-variant hover:bg-surface-container-highest transition-colors group" href="#">
+<span class="material-symbols-outlined mr-4 group-hover:text-primary transition-colors">build</span>
+<span class="font-body-sm text-body-sm">Maintenance</span>
+</a>
+<a class="flex items-center px-6 py-3 mx-2 rounded-DEFAULT text-outline hover:text-on-surface-variant hover:bg-surface-container-highest transition-colors group" href="#">
+<span class="material-symbols-outlined mr-4 group-hover:text-primary transition-colors">local_gas_station</span>
+<span class="font-body-sm text-body-sm">Fuel &amp; Expenses</span>
+</a>
+<!-- Active -->
+<a class="flex items-center px-6 py-3 mx-2 rounded-DEFAULT text-primary bg-surface-container-high border-l-2 border-primary relative" href="#">
+<span class="material-symbols-outlined mr-4">analytics</span>
+<span class="font-body-sm text-body-sm font-medium">Analytics</span>
+</a>
+<!-- Inactive -->
+<a class="flex items-center px-6 py-3 mx-2 rounded-DEFAULT text-outline hover:text-on-surface-variant hover:bg-surface-container-highest transition-colors group" href="#">
+<span class="material-symbols-outlined mr-4 group-hover:text-primary transition-colors">settings</span>
+<span class="font-body-sm text-body-sm">Settings</span>
+</a>
+</div>
+<!-- User Profile Area -->
+<div class="mt-auto p-4 border-t border-outline-variant">
+<div class="flex items-center gap-3 px-2 py-2">
+<div class="w-8 h-8 rounded-full bg-surface-variant overflow-hidden shrink-0 border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A small, professional headshot of a manager in a high-tech transit operations center. Bright ambient lighting, sleek and modern." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3Y7fp7alhtlpsOhau3YpaVbNy1FrDMdcluF8paFpGnhBuVUSbxpDPZqTWoH7Gpy-505wACadQ1VPn7byP55WuBfwNFJ91IpwCWLt3xYMJvPhEYLERCgLhz8SwOaaBgtf0Sk1myG-ko3ClICoKzOlPPlGRSd2kYWnzNPuLixQMCd1PzpowpE9C4pOqMtyLrOGPov-8S3ka9wmpnX1473F8XNPi8_R5O10VBDGgiuHCd7FjwTJeWgGaMZqeRxog1BiA14w9t1L7NlE">
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-body-sm text-body-sm text-on-surface truncate">Manager K.</span>
+<span class="font-label-sm text-label-sm text-outline truncate">Operations</span>
+</div>
+</div>
+</div>
+</nav>
+<!-- Mobile Top Navigation Bar (Hidden on Desktop) -->
+<nav class="md:hidden flex bg-surface-dim border-b border-outline-variant h-header_height fixed top-0 left-0 w-full z-40 items-center justify-between px-4">
+<div class="flex items-center">
+<span class="material-symbols-outlined text-primary mr-2" style="font-variation-settings: 'FILL' 1;">local_shipping</span>
+<span class="font-headline-sm text-headline-sm font-semibold tracking-tight text-primary">TransitOps</span>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-outline hover:text-primary transition-colors cursor-pointer material-symbols-outlined">notifications</button>
+<div class="w-8 h-8 rounded-full bg-surface-variant overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A small, professional headshot of a manager in a high-tech transit operations center. Bright ambient lighting, sleek and modern." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWwn_ghIw4d7o1dzI8HQAR4PgTz7iuWw071m22kPh7TUyU1FPU6jrehwnVxGgur_kko6DWFUItOWkKa9KSCDQVFvooQ-zhWWN8-R3uKUlH_6HOzwRJvjocXbsCoLcUZh1pUi8kJRUrB5MJ8O-3pKv4r_AGTMpwLGmnluGkBRdc1Fun-b_b9JlU6i5AN6U5GFZ4uelYpC-nm4TMONXqGKwxhoHAYBiVQT0IApm3sLibTuMRYeEiRzBIDAhqu8djUpT-qTm2XILvWfE">
+</div>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col md:ml-sidebar_width mt-header_height md:mt-0 min-h-screen relative overflow-y-auto">
+<!-- Top App Bar Content (Desktop, integrated into content area flow) -->
+<header class="hidden md:flex h-header_height px-margin items-center justify-between border-b border-outline-variant sticky top-0 bg-background/95 backdrop-blur-sm z-30">
+<div class="flex items-center">
+<h1 class="font-headline-md text-headline-md text-primary">Reports &amp; Analytics</h1>
+</div>
+<div class="flex items-center gap-4">
+<button class="flex items-center gap-2 bg-surface-container-high hover:bg-surface-container-highest border border-outline-variant text-on-surface px-4 py-2 rounded-DEFAULT transition-colors font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                    CSV Export
+                </button>
+</div>
+</header>
+<!-- Mobile Header (Visible below mobile nav) -->
+<div class="md:hidden px-4 py-4 flex items-center justify-between">
+<h1 class="font-headline-md text-headline-md text-primary">Reports &amp; Analytics</h1>
+<button class="flex items-center gap-1 bg-surface-container-high border border-outline-variant text-on-surface px-3 py-1.5 rounded-DEFAULT font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[16px]">download</span>
+                Export
+            </button>
+</div>
+<div class="p-margin flex flex-col gap-margin flex-1 max-w-[1600px] w-full mx-auto">
+<!-- Hero Metrics Row -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-container_gap">
+<!-- Metric 1 -->
+<div class="bg-[#181818] border border-[#333333] rounded-lg p-6 flex flex-col justify-between h-[180px] relative overflow-hidden group">
+<div>
+<h3 class="font-body-md text-body-md text-on-surface-variant mb-1">Fuel Efficiency</h3>
+<div class="font-headline-lg text-headline-lg text-primary tracking-tight font-light text-5xl">
+                            9.1 <span class="text-2xl text-outline ml-1">km/L</span>
+</div>
+</div>
+<!-- Sparkline graphic simulation -->
+<div class="absolute bottom-0 left-0 w-full h-12 opacity-50 flex items-end">
+<svg class="w-full h-full preserve-aspect-ratio-none stroke-green-500 fill-none" preserveAspectRatio="none" viewBox="0 0 100 30">
+<path d="M0 25 L10 23 L20 25 L30 22 L40 26 L50 20 L60 22 L70 18 L80 20 L90 15 L100 12" stroke-linecap="round" stroke-width="2"></path>
+</svg>
+</div>
+</div>
+<!-- Metric 2 -->
+<div class="bg-[#181818] border border-[#333333] rounded-lg p-6 flex flex-col justify-between h-[180px]">
+<div>
+<h3 class="font-body-md text-body-md text-on-surface-variant mb-1">Fleet Utilization</h3>
+<div class="font-headline-lg text-headline-lg text-primary tracking-tight font-light text-5xl">
+                            82%
+                        </div>
+</div>
+<!-- Progress Bar -->
+<div class="mt-auto mb-2">
+<div class="flex justify-between font-label-sm text-label-sm text-outline mb-2">
+<span>Utilization</span>
+</div>
+<div class="w-full bg-surface-variant h-2 rounded-full overflow-hidden">
+<div class="bg-green-500 w-[82%] h-full rounded-full"></div>
+</div>
+</div>
+</div>
+<!-- Metric 3 -->
+<div class="bg-[#181818] border border-[#333333] rounded-lg p-6 flex flex-col justify-between h-[180px] relative overflow-hidden">
+<div>
+<h3 class="font-body-md text-body-md text-on-surface-variant mb-1">Operational Cost</h3>
+<div class="font-headline-lg text-headline-lg text-primary tracking-tight font-light text-5xl">
+                            $342,500
+                        </div>
+</div>
+<!-- Stacked area chart simulation -->
+<div class="absolute bottom-0 left-0 w-full h-16 flex items-end opacity-80 gap-[1px]">
+<div class="h-[60%] w-full bg-green-600/80 rounded-tl-sm"></div>
+<div class="h-[75%] w-full bg-green-600/80"></div>
+<div class="h-[70%] w-full bg-green-600/80"></div>
+<div class="h-[85%] w-full bg-green-600/80"></div>
+<div class="h-[90%] w-full bg-green-600/80"></div>
+<div class="h-[100%] w-[40px] bg-red-500/80 shrink-0"></div>
+<div class="h-[95%] w-[30px] bg-blue-600/80 shrink-0 mr-4"></div>
+</div>
+</div>
+</div>
+<!-- ROI Formula Section (Full Width) -->
+<div class="bg-[#181818] border border-[#333333] rounded-lg p-8 flex flex-col md:flex-row items-center justify-between gap-8">
+<div class="flex flex-col w-full md:w-1/3">
+<h3 class="font-body-md text-body-md text-on-surface-variant mb-2">Vehicle ROI</h3>
+<div class="font-headline-lg text-headline-lg text-primary text-6xl font-light tracking-tight">
+                        18.5%
+                    </div>
+</div>
+<div class="w-full md:w-2/3 flex items-center justify-center md:justify-end overflow-x-auto pb-2 md:pb-0">
+<div class="flex items-center text-on-surface font-body-lg text-body-lg whitespace-nowrap min-w-max">
+<span class="mr-4 text-outline font-mono-data text-mono-data">ROI =</span>
+<div class="flex flex-col items-center">
+<div class="pb-3 border-b border-outline-variant w-full text-center px-4">
+                                Total Revenue - <span class="text-on-surface-variant">(Maintenance + Fuel + Operational Costs)</span>
+</div>
+<div class="pt-3 text-on-surface-variant">
+                                Total Vehicle Cost
+                            </div>
+</div>
+</div>
+</div>
+</div>
+<!-- Charts Row -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-container_gap min-h-[350px]">
+<!-- Line Chart: Revenue vs Cost -->
+<div class="bg-[#181818] border border-[#333333] rounded-lg p-6 flex flex-col">
+<div class="flex items-center justify-between mb-6">
+<h3 class="font-body-md text-body-md text-on-surface">Monthly Revenue vs. Cost</h3>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2">
+<div class="w-3 h-1 bg-green-500 rounded-full"></div>
+<span class="font-label-sm text-label-sm text-outline">Revenue</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-3 h-1 bg-red-500 rounded-full"></div>
+<span class="font-label-sm text-label-sm text-outline">Cost</span>
+</div>
+</div>
+</div>
+<div class="flex-1 relative w-full flex">
+<!-- Y-Axis -->
+<div class="flex flex-col justify-between text-right pr-4 pb-8 font-label-sm text-label-sm text-outline-variant w-[60px] shrink-0 border-r border-outline-variant/30">
+<span>$20,000</span>
+<span>$15,000</span>
+<span>$10,000</span>
+<span>$5,000</span>
+<span>$0</span>
+</div>
+<!-- Chart Area (Simulated with SVG) -->
+<div class="flex-1 relative pb-8 h-full">
+<!-- Grid lines -->
+<div class="absolute inset-0 flex flex-col justify-between pb-8 z-0">
+<div class="w-full border-t border-outline-variant/10 h-0"></div>
+<div class="w-full border-t border-outline-variant/10 h-0"></div>
+<div class="w-full border-t border-outline-variant/10 h-0"></div>
+<div class="w-full border-t border-outline-variant/10 h-0"></div>
+<div class="w-full border-t border-outline-variant/30 h-0"></div>
+</div>
+<!-- Lines -->
+<svg class="absolute inset-0 w-full h-[calc(100%-32px)] z-10" preserveAspectRatio="none" viewBox="0 0 100 100">
+<!-- Revenue Line & Area -->
+<path class="chart-gradient-revenue" d="M0,60 C10,50 20,55 30,40 C40,45 50,35 60,45 C70,25 80,20 90,30 L100,15 L100,100 L0,100 Z" fill="url(#grad-rev)"></path>
+<path d="M0,60 C10,50 20,55 30,40 C40,45 50,35 60,45 C70,25 80,20 90,30 L100,15" fill="none" stroke="#22c55e" stroke-width="2" vector-effect="non-scaling-stroke"></path>
+<!-- Cost Line & Area -->
+<path class="chart-gradient-cost" d="M0,80 C15,75 25,85 40,75 C50,80 60,65 75,70 C85,60 90,55 100,45 L100,100 L0,100 Z" fill="url(#grad-cost)"></path>
+<path d="M0,80 C15,75 25,85 40,75 C50,80 60,65 75,70 C85,60 90,55 100,45" fill="none" stroke="#ef4444" stroke-width="1.5" vector-effect="non-scaling-stroke"></path>
+<defs>
+<linearGradient id="grad-rev" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="rgba(34, 197, 94, 0.2)"></stop>
+<stop offset="100%" stop-color="rgba(34, 197, 94, 0)"></stop>
+</linearGradient>
+<linearGradient id="grad-cost" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="rgba(239, 68, 68, 0.2)"></stop>
+<stop offset="100%" stop-color="rgba(239, 68, 68, 0)"></stop>
+</linearGradient>
+</defs>
+</svg>
+<!-- X-Axis -->
+<div class="absolute bottom-0 w-full flex justify-between font-label-sm text-label-sm text-outline-variant pt-2">
+<span>Jan</span>
+<span>Feb</span>
+<span>Mar</span>
+<span>Apr</span>
+<span>May</span>
+<span>Jun</span>
+<span>Jul</span>
+<span>Aug</span>
+<span>Sep</span>
+<span>Oct</span>
+<span>Nov</span>
+<span>Dec</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Bar Chart: Top Vehicles by ROI -->
+<div class="bg-[#181818] border border-[#333333] rounded-lg p-6 flex flex-col">
+<h3 class="font-body-md text-body-md text-on-surface mb-6">Top Vehicles by ROI</h3>
+<div class="flex-1 relative flex flex-col justify-between">
+<!-- Chart container with grid background -->
+<div class="absolute inset-y-0 right-0 left-[60px] flex justify-between z-0 pb-[24px]">
+<div class="h-full border-l border-outline-variant/10"></div>
+<div class="h-full border-l border-outline-variant/10"></div>
+<div class="h-full border-l border-outline-variant/10"></div>
+<div class="h-full border-l border-outline-variant/10"></div>
+<div class="h-full border-l border-outline-variant/10"></div>
+<div class="h-full border-l border-outline-variant/10"></div>
+<div class="h-full border-l border-outline-variant/10"></div>
+<div class="h-full border-l border-outline-variant/10 border-r"></div>
+</div>
+<!-- Bars -->
+<div class="flex-1 flex flex-col justify-around z-10 pb-[24px]">
+<!-- Row 1 -->
+<div class="flex items-center w-full">
+<div class="w-[60px] shrink-0 font-label-sm text-label-sm text-outline-variant pr-2 text-right">TRD101</div>
+<div class="flex-1 flex items-center">
+<div class="bg-[#4ade80] h-6 rounded-r-sm w-[90%] flex items-center justify-end px-2"></div>
+<span class="font-label-sm text-label-sm text-on-surface ml-2">18.5%</span>
+</div>
+</div>
+<!-- Row 2 -->
+<div class="flex items-center w-full">
+<div class="w-[60px] shrink-0 font-label-sm text-label-sm text-outline-variant pr-2 text-right">VAN-03</div>
+<div class="flex-1 flex items-center">
+<div class="bg-[#4ade80] h-6 rounded-r-sm w-[75%] flex items-center justify-end px-2 opacity-90"></div>
+<span class="font-label-sm text-label-sm text-on-surface ml-2">27.3%</span>
+</div>
+</div>
+<!-- Row 3 -->
+<div class="flex items-center w-full">
+<div class="w-[60px] shrink-0 font-label-sm text-label-sm text-outline-variant pr-2 text-right">VAN-05</div>
+<div class="flex-1 flex items-center">
+<div class="bg-[#4ade80] h-6 rounded-r-sm w-[65%] flex items-center justify-end px-2 opacity-80"></div>
+<span class="font-label-sm text-label-sm text-on-surface ml-2">15.3%</span>
+</div>
+</div>
+<!-- Row 4 -->
+<div class="flex items-center w-full">
+<div class="w-[60px] shrink-0 font-label-sm text-label-sm text-outline-variant pr-2 text-right">VAN-03</div>
+<div class="flex-1 flex items-center">
+<div class="bg-[#4ade80] h-6 rounded-r-sm w-[55%] flex items-center justify-end px-2 opacity-70"></div>
+<span class="font-label-sm text-label-sm text-on-surface ml-2">13.8%</span>
+</div>
+</div>
+<!-- Row 5 -->
+<div class="flex items-center w-full">
+<div class="w-[60px] shrink-0 font-label-sm text-label-sm text-outline-variant pr-2 text-right">TRD101</div>
+<div class="flex-1 flex items-center">
+<div class="bg-[#4ade80] h-6 rounded-r-sm w-[45%] flex items-center justify-end px-2 opacity-60"></div>
+<span class="font-label-sm text-label-sm text-on-surface ml-2">12.7%</span>
+</div>
+</div>
+</div>
+<!-- X-Axis -->
+<div class="absolute bottom-0 right-0 left-[60px] flex justify-between font-label-sm text-label-sm text-outline-variant border-t border-outline-variant/30 pt-2">
+<span>0%</span>
+<span>5%</span>
+<span>10%</span>
+<span>15%</span>
+<span>20%</span>
+<span>25%</span>
+<span>30%</span>
+<span>35%</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

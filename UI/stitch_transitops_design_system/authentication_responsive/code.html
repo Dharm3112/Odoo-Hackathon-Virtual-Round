@@ -1,0 +1,193 @@
+<!DOCTYPE html><html class="dark" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>TransitOps - Authentication</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "secondary": "#c7c6c6",
+                        "surface-container-high": "#2a2a2a",
+                        "secondary-fixed-dim": "#c7c6c6",
+                        "on-surface": "#e5e2e1",
+                        "surface": "#131313",
+                        "on-tertiary-container": "#636565",
+                        "inverse-surface": "#e5e2e1",
+                        "on-primary-fixed-variant": "#454747",
+                        "surface-container-low": "#1c1b1b",
+                        "inverse-primary": "#5d5f5f",
+                        "on-secondary-container": "#b5b5b5",
+                        "tertiary-container": "#e2e2e2",
+                        "background": "#131313",
+                        "on-tertiary-fixed": "#1a1c1c",
+                        "surface-bright": "#393939",
+                        "on-tertiary-fixed-variant": "#454747",
+                        "primary-fixed": "#e2e2e2",
+                        "on-primary-fixed": "#1a1c1c",
+                        "error-container": "#93000a",
+                        "surface-dim": "#131313",
+                        "surface-container-highest": "#353534",
+                        "on-primary-container": "#636565",
+                        "tertiary-fixed": "#e2e2e2",
+                        "on-error-container": "#ffdad6",
+                        "on-error": "#690005",
+                        "tertiary-fixed-dim": "#c6c6c7",
+                        "tertiary": "#ffffff",
+                        "surface-container": "#201f1f",
+                        "on-secondary-fixed": "#1b1c1c",
+                        "on-surface-variant": "#c4c7c8",
+                        "on-secondary-fixed-variant": "#464747",
+                        "on-secondary": "#303031",
+                        "surface-tint": "#c6c6c7",
+                        "secondary-container": "#464747",
+                        "secondary-fixed": "#e3e2e2",
+                        "primary-fixed-dim": "#c6c6c7",
+                        "primary-container": "#e2e2e2",
+                        "surface-container-lowest": "#0e0e0e",
+                        "on-primary": "#2f3131",
+                        "error": "#ffb4ab",
+                        "surface-variant": "#353534",
+                        "outline": "#8e9192",
+                        "on-background": "#e5e2e1",
+                        "primary": "#ffffff",
+                        "outline-variant": "#444748",
+                        "inverse-on-surface": "#313030",
+                        "on-tertiary": "#2f3131"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    spacing: {
+                        "margin": "24px",
+                        "gutter": "16px",
+                        "sidebar_width": "64px",
+                        "header_height": "56px",
+                        "container_gap": "12px"
+                    },
+                    fontFamily: {
+                        "label-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "mono-data": ["JetBrains Mono"],
+                        "label-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "headline-sm": ["Inter"]
+                    },
+                    fontSize: {
+                        "label-sm": ["10px", { "lineHeight": "1", "letterSpacing": "0.08em", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-md": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "mono-data": ["13px", { "lineHeight": "1.4", "fontWeight": "400" }],
+                        "label-md": ["12px", { "lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "body-lg": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "body-sm": ["13px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "headline-sm": ["18px", { "lineHeight": "1.4", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-surface-container-lowest text-on-background min-h-screen font-body-md antialiased overflow-hidden selection:bg-surface-bright selection:text-primary">
+<!-- Main Container: 50/50 Split on Desktop, Stacked on Mobile -->
+<main class="flex flex-col md:flex-row min-h-screen w-full">
+<!-- Left Pane: Branding & Info (Elevated Gray Background) -->
+<section class="w-full md:w-1/2 bg-[#000000] flex flex-col justify-center p-8 md:p-16 lg:p-24 relative overflow-hidden">
+<!-- Branding Container -->
+<div class="relative z-10 max-w-lg mx-auto md:mx-0 w-full h-full flex flex-col justify-center gap-12">
+<!-- Logo & Tagline -->
+<div>
+<h1 class="text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight text-primary mb-4" style="letter-spacing: -0.04em;">TransitOps</h1>
+<p class="font-headline-md text-headline-md text-on-surface-variant font-normal">Smart Transport Operations Platform</p>
+</div>
+<!-- Roles List -->
+<div class="flex flex-col gap-6 w-full max-w-sm mt-8">
+<!-- Role 1 -->
+<div class="flex items-center gap-4 py-3 border-b border-surface-variant">
+<span class="material-symbols-outlined text-outline" style="font-size: 28px;">account_tree</span>
+<span class="font-headline-sm text-headline-sm text-outline font-normal">Fleet Manager</span>
+</div>
+<!-- Role 2 -->
+<div class="flex items-center gap-4 py-3 border-b border-surface-variant">
+<span class="material-symbols-outlined text-outline" style="font-size: 28px;">navigation</span>
+<span class="font-headline-sm text-headline-sm text-outline font-normal">Dispatcher</span>
+</div>
+<!-- Role 3 -->
+<div class="flex items-center gap-4 py-3 border-b border-surface-variant">
+<span class="material-symbols-outlined text-outline" style="font-size: 28px;">verified_user</span>
+<span class="font-headline-sm text-headline-sm text-outline font-normal">Safety Officer</span>
+</div>
+<!-- Role 4 -->
+<div class="flex items-center gap-4 py-3 border-b border-surface-variant">
+<span class="material-symbols-outlined text-outline" style="font-size: 28px;">pie_chart</span>
+<span class="font-headline-sm text-headline-sm text-outline font-normal">Financial Analyst</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Right Pane: Authentication Form (Pure Black Background) -->
+<section class="w-full md:w-1/2 bg-[#0a0a0a] flex flex-col items-center justify-center p-8 md:p-16 relative">
+<!-- Form Container - Glass/Elevated Look -->
+<div class="w-full max-w-md bg-surface border border-surface-variant rounded-xl p-8 shadow-2xl relative z-10 backdrop-blur-xl bg-opacity-80">
+<form class="flex flex-col gap-6" onsubmit="event.preventDefault();">
+<!-- Email Field -->
+<div class="flex flex-col gap-2">
+<label class="font-label-md text-label-md text-on-surface" for="email">Email</label>
+<div class="relative">
+<input class="w-full bg-[#181818] border border-surface-variant rounded text-on-surface px-4 py-3 font-body-md text-body-md placeholder:text-outline-variant focus:outline-none focus:border-primary focus:ring-0 transition-colors" id="email" name="email" placeholder="Email" required="" type="email">
+</div>
+</div>
+<!-- Password Field -->
+<div class="flex flex-col gap-2">
+<label class="font-label-md text-label-md text-on-surface" for="password">Password</label>
+<div class="relative">
+<input class="w-full bg-[#181818] border border-surface-variant rounded text-on-surface px-4 py-3 font-body-md text-body-md placeholder:text-outline-variant focus:outline-none focus:border-primary focus:ring-0 transition-colors" id="password" name="password" placeholder="Password" required="" type="password">
+</div>
+</div>
+<!-- Utilities (Remember Me & Forgot Password) -->
+<div class="flex items-center justify-between mt-2">
+<label class="flex items-center gap-2 cursor-pointer group">
+<input class="w-4 h-4 rounded-sm bg-[#181818] border-surface-variant text-primary focus:ring-0 focus:ring-offset-0 checked:bg-primary checked:border-primary transition-colors cursor-pointer" type="checkbox">
+<span class="font-body-sm text-body-sm text-on-surface-variant group-hover:text-on-surface transition-colors">Remember me</span>
+</label>
+<a class="font-body-sm text-body-sm text-outline hover:text-primary transition-colors underline decoration-outline-variant hover:decoration-primary underline-offset-4" href="#">Forgot password?</a>
+</div>
+<!-- Submit Button -->
+<button class="mt-4 w-full bg-[#393939] hover:bg-[#4a4a4a] text-on-surface font-body-md text-body-md font-medium py-3 px-4 rounded transition-colors duration-200 flex items-center justify-center gap-2" type="submit">
+                        Authenticate
+                    </button>
+</form>
+</div>
+</section>
+</main>
+<script>
+        // Simple script to handle input focus states for custom styling if needed beyond tailwind classes
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('focus', (e) => {
+                e.target.parentElement.classList.add('focused');
+            });
+            input.addEventListener('blur', (e) => {
+                e.target.parentElement.classList.remove('focused');
+            });
+        });
+    </script>
+</body></html>

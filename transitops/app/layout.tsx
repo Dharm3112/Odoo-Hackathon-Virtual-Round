@@ -4,6 +4,8 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { SessionProvider } from "next-auth/react";
 import { AuthProvider } from "@/components/providers/auth-provider";
+import { ThemeProvider } from "@/components/providers/theme-provider";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit", display: "swap" });
@@ -22,7 +24,11 @@ export default function RootLayout({
     <html lang="en" className={cn("font-sans", inter.variable, outfit.variable)} suppressHydrationWarning>
       <body className={`${inter.variable} ${outfit.variable} antialiased`}>
         <SessionProvider>
-          <AuthProvider>{children}</AuthProvider>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <TooltipProvider>
+              <AuthProvider>{children}</AuthProvider>
+            </TooltipProvider>
+          </ThemeProvider>
         </SessionProvider>
       </body>
     </html>
