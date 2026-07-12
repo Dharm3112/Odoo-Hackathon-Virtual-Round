@@ -5,10 +5,9 @@ import { usePathname } from "next/navigation";
 import { useAuth } from "@/components/providers/auth-provider";
 import { MODULE_LABELS, MODULE_ORDER, type Module } from "@/lib/rbac";
 import { cn } from "@/lib/utils";
-import { Truck, LayoutDashboard, Truck as TruckIcon, Users, MapPin, Wrench, Fuel, BarChart3, Settings, ChevronLeft, ChevronRight, LogOut } from "lucide-react";
+import { Truck as TruckIcon, LayoutDashboard, Users, MapPin, Wrench, Fuel, BarChart3, Settings, ChevronLeft, ChevronRight, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useState } from "react";
 
 const ICONS: Record<Module, React.ComponentType<{ className?: string }>> = {

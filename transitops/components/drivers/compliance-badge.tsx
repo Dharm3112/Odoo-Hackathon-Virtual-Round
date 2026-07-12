@@ -1,7 +1,6 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { getComplianceColor, getSafetyScoreColor } from "@/lib/chart-colors";
 import { BadgeCheck, AlertTriangle, XCircle } from "lucide-react";
 
 interface ComplianceBadgeProps {

@@ -26,9 +26,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Truck, Plus, Search, Filter, Edit, Truck as TruckIcon } from "lucide-react";
+import { Truck, Plus, Search, Edit, Filter } from "lucide-react";
 import { VehicleFormModal } from "@/components/vehicles/vehicle-form-modal";
-import { cn } from "@/lib/utils";
 import { VEHICLE_TYPES, VEHICLE_STATUS } from "@/lib/constants";
 
 interface Vehicle {
@@ -44,7 +43,7 @@ interface Vehicle {
 }
 
 export default function VehiclesPage() {
-  const { hasPermission, user } = useAuth();
+  const { hasPermission } = useAuth();
   const canManage = hasPermission("fleet", "full");
 
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);

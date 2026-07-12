@@ -23,8 +23,8 @@ import { Badge } from "@/components/ui/badge";
 import { DriverFormModal } from "@/components/drivers/driver-form-modal";
 import { ComplianceBadge } from "@/components/drivers/compliance-badge";
 import { cn } from "@/lib/utils";
-import { Users, Plus, Search, Filter, Edit, User, UserX, UserCheck, MoreVertical, Eye } from "lucide-react";
-import { DRIVER_STATUSES } from "@/lib/constants";
+import { Plus, Search, Edit, User, UserX, UserCheck, MoreVertical, Eye } from "lucide-react";
+import { DRIVER_STATUS } from "@/lib/constants";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -46,7 +46,7 @@ interface Driver {
 }
 
 export default function DriversPage() {
-  const { hasPermission, user } = useAuth();
+  const { hasPermission } = useAuth();
   const canManage = hasPermission("drivers", "full");
 
   const [drivers, setDrivers] = useState<Driver[]>([]);
@@ -147,7 +147,7 @@ export default function DriversPage() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="">All Statuses</SelectItem>
-              {DRIVER_STATUSES.map((s) => (
+              {Object.values(DRIVER_STATUS).map((s) => (
                 <SelectItem key={s} value={s}>
                   {s}
                 </SelectItem>
