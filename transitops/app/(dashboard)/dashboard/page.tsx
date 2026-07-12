@@ -4,7 +4,7 @@ export default function DashboardPage() {
   return (
     <div className="flex flex-col gap-margin max-w-[1600px] w-full mx-auto">
       {/* KPI Cards Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-container_gap">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-container-gap">
         {/* Active Vehicles Card */}
         <div className="bg-surface-container border border-outline-variant rounded-lg p-6 flex flex-col gap-4 relative overflow-hidden group hover:border-outline transition-colors">
           <div className="flex justify-between items-start">
@@ -108,10 +108,10 @@ export default function DashboardPage() {
       </div>
 
       {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-container_gap">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-container-gap">
         
         {/* Left Column (2/3 width on LG) */}
-        <div className="lg:col-span-2 flex flex-col gap-container_gap">
+        <div className="lg:col-span-2 flex flex-col gap-container-gap">
           {/* Active Trips Table */}
           <div className="bg-surface-container border border-outline-variant rounded-lg flex flex-col overflow-hidden">
             <div className="p-4 border-b border-outline-variant flex justify-between items-center bg-surface-container-low">
@@ -212,7 +212,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Right Column (1/3 width on LG) */}
-        <div className="flex flex-col gap-container_gap">
+        <div className="flex flex-col gap-container-gap">
           
           {/* Fleet Status Summary */}
           <div className="bg-surface-container border border-outline-variant rounded-lg p-6 flex flex-col">

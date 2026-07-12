@@ -31,7 +31,7 @@ export default function SettingsPage() {
       </div>
 
       {activeTab === "roles" && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-container_gap mt-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-container-gap mt-4">
           
           {/* Card 1 */}
           <div className="bg-surface-container-low border border-outline-variant/50 rounded-xl p-4 flex flex-col gap-4">

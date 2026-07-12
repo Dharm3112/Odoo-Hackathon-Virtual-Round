@@ -151,7 +151,7 @@ export default function DriversPage() {
       )}
 
       {activeTab === "safety" && (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-container_gap">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-container-gap">
           <div className="bg-surface-container border border-outline-variant rounded-lg p-6 flex flex-col items-center justify-center gap-2">
             <span className="material-symbols-outlined text-4xl text-status-green icon-fill mb-2">check_circle</span>
             <span className="font-headline-lg text-headline-lg text-primary">98%</span>

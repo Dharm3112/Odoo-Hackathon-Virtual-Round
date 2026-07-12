@@ -2,15 +2,39 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulate login
-    window.location.href = "/dashboard";
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        setError("Invalid email or password");
+      } else {
+        router.push("/dashboard");
+        router.refresh();
+      }
+    } catch (err) {
+      setError("An unexpected error occurred. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -33,6 +57,12 @@ export default function LoginPage() {
           </p>
 
           <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
+            {error && (
+              <div className="bg-red-500/10 border border-red-500/30 text-red-500 font-body-sm text-body-sm px-4 py-2.5 rounded-md">
+                {error}
+              </div>
+            )}
+
             <div className="flex flex-col gap-1.5">
               <label className="font-label-md text-label-md text-on-surface">Email</label>
               <input
@@ -42,6 +72,7 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full bg-surface-container-low border border-outline-variant rounded-md px-4 py-3 text-on-surface font-body-md text-body-md focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors placeholder:text-outline-variant"
                 required
+                disabled={isLoading}
               />
             </div>
 
@@ -62,14 +93,16 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full bg-surface-container-low border border-outline-variant rounded-md px-4 py-3 text-on-surface font-body-md text-body-md focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors placeholder:text-outline-variant"
                 required
+                disabled={isLoading}
               />
             </div>
 
             <button
               type="submit"
-              className="mt-4 w-full bg-primary text-background font-label-md text-label-md py-3.5 rounded-md hover:bg-surface-tint transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
+              disabled={isLoading}
+              className="mt-4 w-full bg-primary text-background font-label-md text-label-md py-3.5 rounded-md hover:bg-surface-tint transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Sign In
+              {isLoading ? "Signing In..." : "Sign In"}
             </button>
           </form>
         </div>

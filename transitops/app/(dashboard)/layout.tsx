@@ -10,7 +10,7 @@ export default function DashboardLayout({
     <div className="min-h-screen bg-background">
       <TopBar />
       <Sidebar />
-      <main className="flex-1 md:ml-sidebar_width pt-header_height p-margin min-h-screen w-full transition-all duration-200">
+      <main className="flex-1 md:ml-sidebar-width-expanded pt-header-height p-margin min-h-screen w-full transition-all duration-200">
         {children}
       </main>
     </div>

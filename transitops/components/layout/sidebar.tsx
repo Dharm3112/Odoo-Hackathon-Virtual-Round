@@ -18,8 +18,8 @@ export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="fixed left-0 top-0 h-screen w-sidebar_width bg-surface-container border-r border-surface-variant z-50 flex flex-col pt-header_height hidden md:flex transition-all duration-200">
-      <div className="absolute top-0 left-0 w-full h-header_height flex items-center px-4 border-b border-surface-variant justify-center md:justify-start overflow-hidden">
+    <aside className="fixed left-0 top-0 h-screen w-[64px] md:w-sidebar-width-expanded bg-surface-container border-r border-surface-variant z-50 flex flex-col pt-header-height hidden md:flex transition-all duration-200">
+      <div className="absolute top-0 left-0 w-full h-header-height flex items-center px-4 border-b border-surface-variant justify-center md:justify-start overflow-hidden">
         <span className="material-symbols-outlined text-primary mr-2">alt_route</span>
         <span className="font-headline-sm text-headline-sm font-bold text-primary tracking-tight md:block hidden">
           TransitOps

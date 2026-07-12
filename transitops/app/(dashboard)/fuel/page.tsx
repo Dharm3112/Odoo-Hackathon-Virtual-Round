@@ -38,7 +38,7 @@ export default function FuelExpensesPage() {
       </div>
 
       {activeTab === "log" && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-container_gap">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-container-gap">
           <div className="bg-surface-container border border-outline-variant rounded-lg p-6">
             <h2 className="font-headline-sm text-headline-sm text-primary mb-6">New Expense Entry</h2>
             

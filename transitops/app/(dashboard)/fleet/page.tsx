@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "next";
+import { useState } from "react";
 
 export default function FleetPage() {
   const [activeTab, setActiveTab] = useState<"directory" | "specs">("directory");

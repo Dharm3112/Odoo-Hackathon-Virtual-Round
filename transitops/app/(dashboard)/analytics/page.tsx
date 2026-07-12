@@ -16,7 +16,7 @@ export default function AnalyticsPage() {
       </div>
 
       {/* Hero Metrics Row */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-container_gap">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-container-gap">
         <div className="bg-surface-container border border-outline-variant rounded-lg p-6 flex flex-col justify-between h-[180px] relative overflow-hidden group">
           <div>
             <h3 className="font-body-md text-body-md text-on-surface-variant mb-1">Fuel Efficiency</h3>
@@ -92,7 +92,7 @@ export default function AnalyticsPage() {
       </div>
 
       {/* Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-container_gap min-h-[350px]">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-container-gap min-h-[350px]">
         
         {/* Line Chart: Revenue vs Cost */}
         <div className="bg-surface-container border border-outline-variant rounded-lg p-6 flex flex-col">

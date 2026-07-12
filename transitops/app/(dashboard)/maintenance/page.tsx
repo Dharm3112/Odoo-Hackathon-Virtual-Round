@@ -46,9 +46,9 @@ export default function MaintenancePage() {
       </div>
 
       {activeTab === "overview" && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-container_gap">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-container-gap">
           {/* Left Col */}
-          <div className="lg:col-span-2 flex flex-col gap-container_gap">
+          <div className="lg:col-span-2 flex flex-col gap-container-gap">
             <div className="bg-surface-container border border-outline-variant rounded-lg p-6 flex items-center justify-between">
                <div>
                  <h2 className="font-headline-sm text-headline-sm text-primary mb-1">Fleet Health Score</h2>
@@ -94,7 +94,7 @@ export default function MaintenancePage() {
           </div>
           
           {/* Right Col */}
-          <div className="flex flex-col gap-container_gap">
+          <div className="flex flex-col gap-container-gap">
             <div className="bg-surface-container border border-outline-variant rounded-lg p-6 flex flex-col gap-4">
               <h3 className="font-headline-sm text-headline-sm text-primary">In Shop Right Now</h3>
               

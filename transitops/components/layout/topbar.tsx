@@ -10,7 +10,7 @@ export function TopBar() {
   const formattedPageName = pageName.charAt(0).toUpperCase() + pageName.slice(1);
 
   return (
-    <header className="fixed top-0 left-0 w-full z-40 flex items-center justify-between px-margin h-header_height bg-surface-container-high border-b border-surface-variant md:pl-[calc(var(--spacing-sidebar_width)+var(--spacing-margin))] transition-all duration-200">
+    <header className="fixed top-0 left-0 w-full z-40 flex items-center justify-between px-margin h-header-height bg-surface-container-high border-b border-surface-variant md:pl-[calc(var(--spacing-sidebar-width-expanded)+var(--spacing-margin))] transition-all duration-200">
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2 md:hidden">
           <span className="material-symbols-outlined text-primary text-2xl icon-fill">alt_route</span>
