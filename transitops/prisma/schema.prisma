@@ -1,13 +1,153 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
-  provider = "prisma-client"
-  output   = "../app/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int       @id @default(autoincrement())
+  email        String    @unique
+  passwordHash String    @map("password_hash")
+  fullName     String    @map("full_name")
+  roleId       Int       @map("role_id")
+  role         Role      @relation(fields: [roleId], references: [id])
+  createdAt    DateTime  @default(now()) @map("created_at")
+  lastLogin    DateTime? @map("last_login")
+  isActive     Boolean   @default(true) @map("is_active")
+  trips        Trip[]    @relation("CreatedBy")
+
+  @@map("users")
+}
+
+model Role {
+  id          Int    @id @default(autoincrement())
+  name        String @unique
+  permissions String
+  users       User[]
+
+  @@map("roles")
+}
+
+model Vehicle {
+  id                 Int              @id @default(autoincrement())
+  registrationNumber String           @unique @map("registration_number")
+  nameModel          String           @map("name_model")
+  type               String
+  maxLoadCapacity    Float            @map("max_load_capacity")
+  odometer           Float            @default(0)
+  acquisitionCost    Float            @default(0) @map("acquisition_cost")
+  status             String           @default("Available")
+  region             String?
+  createdAt          DateTime         @default(now()) @map("created_at")
+  updatedAt          DateTime         @updatedAt @map("updated_at")
+  trips              Trip[]
+  maintenanceLogs    MaintenanceLog[]
+  fuelLogs           FuelLog[]
+  expenses           Expense[]
+
+  @@index([status])
+  @@map("vehicles")
+}
+
+model Driver {
+  id              Int       @id @default(autoincrement())
+  name            String
+  licenseNumber   String    @unique @map("license_number")
+  licenseCategory String    @map("license_category")
+  licenseExpiry   DateTime  @map("license_expiry")
+  contactNumber   String    @map("contact_number")
+  safetyScore     Float     @default(100) @map("safety_score")
+  status          String    @default("Available")
+  safetyEvents    String?   @map("safety_events")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  trips           Trip[]
+
+  @@index([status, licenseExpiry])
+  @@map("drivers")
+}
+
+model Trip {
+  id              Int       @id @default(autoincrement())
+  tripCode        String    @unique @map("trip_code")
+  vehicleId       Int       @map("vehicle_id")
+  vehicle         Vehicle   @relation(fields: [vehicleId], references: [id])
+  driverId        Int       @map("driver_id")
+  driver          Driver    @relation(fields: [driverId], references: [id])
+  createdById     Int       @map("created_by")
+  createdBy       User      @relation("CreatedBy", fields: [createdById], references: [id])
+  source          String
+  destination     String
+  cargoWeight     Float     @map("cargo_weight")
+  plannedDistance Float     @map("planned_distance")
+  actualDistance  Float?    @map("actual_distance")
+  fuelConsumed    Float?    @map("fuel_consumed")
+  startOdometer   Float?    @map("start_odometer")
+  endOdometer     Float?    @map("end_odometer")
+  status          String    @default("Draft")
+  revenue         Float?
+  dispatchedAt    DateTime? @map("dispatched_at")
+  completedAt     DateTime? @map("completed_at")
+  cancelledAt     DateTime? @map("cancelled_at")
+  createdAt       DateTime  @default(now()) @map("created_at")
+
+  @@index([status])
+  @@index([vehicleId, driverId])
+  @@map("trips")
+}
+
+model MaintenanceLog {
+  id          Int       @id @default(autoincrement())
+  recordCode  String    @unique @map("record_code")
+  vehicleId   Int       @map("vehicle_id")
+  vehicle     Vehicle   @relation(fields: [vehicleId], references: [id])
+  serviceType String    @map("service_type")
+  description String?
+  cost        Float
+  status      String    @default("Active")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  closedAt    DateTime? @map("closed_at")
+
+  @@index([vehicleId, status])
+  @@map("maintenance_logs")
+}
+
+model FuelLog {
+  id             Int       @id @default(autoincrement())
+  logCode        String    @unique @map("log_code")
+  vehicleId      Int       @map("vehicle_id")
+  vehicle        Vehicle   @relation(fields: [vehicleId], references: [id])
+  logDate        DateTime  @map("log_date")
+  liters         Float
+  costPerLiter   Float     @map("cost_per_liter")
+  totalCost      Float     @map("total_cost")
+  odometerAtFill Float?    @map("odometer_at_fill")
+  receiptUrl     String?   @map("receipt_url")
+  approvalStatus String    @default("Pending") @map("approval_status")
+  approvedById   Int?      @map("approved_by")
+  createdAt      DateTime  @default(now()) @map("created_at")
+
+  @@index([vehicleId, logDate])
+  @@map("fuel_logs")
+}
+
+model Expense {
+  id             Int       @id @default(autoincrement())
+  expenseCode    String    @unique @map("expense_code")
+  tripId         Int?      @map("trip_id")
+  vehicleId      Int       @map("vehicle_id")
+  vehicle        Vehicle   @relation(fields: [vehicleId], references: [id])
+  category       String
+  amount         Float
+  expenseDate    DateTime  @map("expense_date")
+  description    String?
+  receiptUrl     String?   @map("receipt_url")
+  approvalStatus String    @default("Pending") @map("approval_status")
+  approvedById   Int?      @map("approved_by")
+  createdAt      DateTime  @default(now()) @map("created_at")
+
+  @@map("expenses")
 }
