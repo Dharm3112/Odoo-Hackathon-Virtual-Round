@@ -36,6 +36,7 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("Form submitted, fetching CSRF token...");
     setIsLoading(true);
     setFormError("");
 
@@ -58,27 +59,50 @@ export default function LoginPage() {
     }
 
     try {
-      const result = await signIn("credentials", {
-        email,
-        password,
-        role: role.name,
-        rememberMe: rememberMe.toString(),
-        redirect: false,
+      // Fetch CSRF token
+      console.log("Fetching CSRF token...");
+      const csrfRes = await fetch("/api/auth/csrf");
+      const csrfData = await csrfRes.json();
+      const csrfToken = csrfData.csrfToken;
+      console.log("Got CSRF token:", csrfToken);
+
+      // Submit credentials with CSRF token
+      console.log("Submitting credentials...");
+      const res = await fetch("/api/auth/callback/credentials", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        credentials: "include",
+        body: new URLSearchParams({
+          email,
+          password,
+          role: role.name,
+          rememberMe: rememberMe.toString(),
+          csrfToken,
+          redirect: "false",
+        }),
       });
 
-      if (result?.error) {
-        if (result.error.includes("locked")) {
-          setFormError(result.error);
-        } else if (result.error.includes("role")) {
-          setFormError("Invalid role selected for this account");
-        } else {
-          setFormError("Invalid email or password. Please try again.");
-        }
-      } else {
+      console.log("Response status:", res.status);
+      const data = await res.json();
+      console.log("Response data:", data);
+
+      if (res.ok && data.url && !data.error) {
+        console.log("Login successful, redirecting to:", callbackUrl);
         router.push(callbackUrl);
         router.refresh();
+      } else {
+        console.log("Login failed:", data);
+        const errorMsg = data.error || "Invalid email or password. Please try again.";
+        if (errorMsg.includes("locked")) {
+          setFormError(errorMsg);
+        } else if (errorMsg.includes("role")) {
+          setFormError("Invalid role selected for this account");
+        } else {
+          setFormError(errorMsg);
+        }
       }
-    } catch {
+    } catch (err) {
+      console.error("Login exception:", err);
       setFormError("An unexpected error occurred. Please try again.");
     } finally {
       setIsLoading(false);
