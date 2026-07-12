@@ -21,12 +21,11 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { Calendar } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar as CalendarIcon } from "@/components/ui/calendar";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { cn } from "@/lib/utils";
-import { Loader2, X, CheckCircle, User, BadgeCheck, AlertTriangle } from "lucide-react";
+import { Loader2, X, CheckCircle, User, AlertTriangle } from "lucide-react";
 
 const driverSchema = z.object({
   name: z.string().min(1, "Name is required").max(100),

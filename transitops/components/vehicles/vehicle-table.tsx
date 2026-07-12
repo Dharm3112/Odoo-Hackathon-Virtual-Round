@@ -1,8 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -28,7 +26,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Truck, Search, Plus, Edit, Eye, Truck as TruckIcon } from "lucide-react";
+import { Truck, Search, Plus, Edit } from "lucide-react";
 import { VehicleFormModal } from "./vehicle-form-modal";
 
 const VEHICLE_TYPES = ["Van", "Truck", "Mini", "Bus", "Sedan"];
@@ -158,7 +156,7 @@ export function VehicleTable({ vehicles, onEdit, onRetire, canManage }: VehicleT
                   <TableCell>{vehicle.nameModel}</TableCell>
                   <TableCell>
                     <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs bg-muted">
-                      <TruckIcon className="w-3 h-3" />
+                      <Truck className="w-3 h-3" />
                       {vehicle.type}
                     </span>
                   </TableCell>

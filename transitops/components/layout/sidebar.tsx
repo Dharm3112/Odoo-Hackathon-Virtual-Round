@@ -5,13 +5,13 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { href: "/dashboard", icon: "dashboard", label: "Dashboard" },
-  { href: "/fleet", icon: "local_shipping", label: "Fleet" },
+  { href: "/", icon: "dashboard", label: "Dashboard" },
+  { href: "/vehicles", icon: "local_shipping", label: "Fleet" },
   { href: "/drivers", icon: "badge", label: "Drivers" },
   { href: "/trips", icon: "route", label: "Trips" },
   { href: "/maintenance", icon: "build", label: "Maintenance" },
-  { href: "/fuel", icon: "local_gas_station", label: "Fuel & Expenses" },
-  { href: "/analytics", icon: "analytics", label: "Analytics" },
+  { href: "/fuel-expenses", icon: "local_gas_station", label: "Fuel & Expenses" },
+  { href: "/reports", icon: "analytics", label: "Analytics" },
 ];
 
 export function Sidebar() {

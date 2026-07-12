@@ -50,7 +50,6 @@ export default withAuth(
 
 export const config = {
   matcher: [
-    /* Temporarily disabled for UI testing phase
     "/vehicles/:path*",
     "/drivers/:path*",
     "/trips/:path*",
@@ -59,6 +58,5 @@ export const config = {
     "/reports/:path*",
     "/settings/:path*",
     "/",
-    */
   ],
 };

@@ -23,7 +23,6 @@ import {
 } from "@/components/ui/dialog";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Truck, Loader2, X, CheckCircle } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { VEHICLE_TYPES } from "@/lib/constants";
 
 const vehicleSchema = z.object({

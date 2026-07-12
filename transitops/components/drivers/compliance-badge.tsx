@@ -9,7 +9,7 @@ interface ComplianceBadgeProps {
   safetyScore: number;
 }
 
-export function ComplianceBadge({ licenseExpiry, status, safetyScore }: ComplianceBadgeProps) {
+export function ComplianceBadge({ licenseExpiry, status, safetyScore: _safetyScore }: ComplianceBadgeProps) {
   const expiryDate = new Date(licenseExpiry);
   const today = new Date();
   const diffTime = expiryDate.getTime() - today.getTime();

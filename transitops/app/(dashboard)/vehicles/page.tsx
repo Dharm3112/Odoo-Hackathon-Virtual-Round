@@ -26,7 +26,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Truck, Plus, Search, Edit, Filter } from "lucide-react";
+import { Truck, Plus, Search, Edit } from "lucide-react";
 import { VehicleFormModal } from "@/components/vehicles/vehicle-form-modal";
 import { VEHICLE_TYPES, VEHICLE_STATUS } from "@/lib/constants";
 
@@ -76,6 +76,7 @@ export default function VehiclesPage() {
 
   useEffect(() => {
     fetchVehicles();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search, typeFilter, statusFilter]);
 
   const handleEdit = (vehicle: Vehicle) => {
@@ -203,7 +204,7 @@ export default function VehiclesPage() {
                       <TableCell className="font-medium">{vehicle.nameModel}</TableCell>
                       <TableCell>
                         <Badge variant="outline" className="gap-1">
-                          <TruckIcon className="w-3 h-3" />
+                          <Truck className="w-3 h-3" />
                           {vehicle.type}
                         </Badge>
                       </TableCell>

@@ -22,7 +22,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const { data: session, status, update } = useSession();
+  const { data: session, status } = useSession();
 
   const hasPermission = (module: Module, requiredLevel: "full" | "view" = "full"): boolean => {
     if (!session?.user) return false;

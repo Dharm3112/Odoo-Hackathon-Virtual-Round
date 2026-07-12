@@ -1,8 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import { prisma } from "@/lib/prisma";
-import { getVehicleById, updateVehicle, retireVehicle } from "@/lib/services/vehicle.service";
+import { getVehicleById, updateVehicle } from "@/lib/services/vehicle.service";
 import { updateVehicleSchema } from "@/lib/validations/vehicle.schema";
 
 export async function GET(
@@ -36,7 +36,7 @@ export async function PUT(
   const validated = updateVehicleSchema.parse(body);
 
   // Prevent status change through this endpoint
-  const { status, ...updateData } = validated;
+  const { status: _status, ...updateData } = validated;
 
   const vehicle = await updateVehicle(parseInt(id), updateData);
   return NextResponse.json(vehicle);
