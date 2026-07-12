@@ -48,12 +48,13 @@ export default function LoginPage() {
 
       if (result?.error) {
         setFormError("Invalid email or password. Please try again.");
-      } else {
-        router.push(callbackUrl);
-        router.refresh();
+        return;
       }
+
+      router.push(callbackUrl);
+      router.refresh();
     } catch {
-      setFormError("An unexpected error occurred. Please try again.");
+      setFormError("Something went wrong. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -70,19 +71,15 @@ export default function LoginPage() {
           <p className="text-muted-foreground mt-1">Smart Transport Operations Platform</p>
         </div>
 
-        <Card className="glass">
-          <CardHeader className="text-center pb-4">
+        <Card className="glass shadow-xl">
+          <CardHeader className="text-center pb-2">
             <CardTitle className="text-2xl">Sign In</CardTitle>
+            <p className="text-muted-foreground text-sm">Enter your credentials to access your dashboard</p>
           </CardHeader>
           <CardContent className="space-y-4">
-            {error && (
-              <Alert className="border-destructive/50 bg-destructive/10 text-destructive">
-                <AlertDescription>Invalid email or password. Please try again.</AlertDescription>
-              </Alert>
-            )}
-            {formError && (
-              <Alert className="border-destructive/50 bg-destructive/10 text-destructive">
-                <AlertDescription>{formError}</AlertDescription>
+            {(error || formError) && (
+              <Alert variant="destructive" className="text-sm">
+                <AlertDescription>{formError || "Invalid email or password. Please try again."}</AlertDescription>
               </Alert>
             )}
 
@@ -96,8 +93,8 @@ export default function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  disabled={isLoading}
                   autoComplete="email"
+                  disabled={isLoading}
                 />
               </div>
 
@@ -111,15 +108,14 @@ export default function LoginPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    disabled={isLoading}
                     autoComplete="current-password"
+                    disabled={isLoading}
                     className="pr-10"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                    aria-label={showPassword ? "Hide password" : "Show password"}
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
@@ -143,11 +139,13 @@ export default function LoginPage() {
               </div>
 
               <div className="flex items-center justify-between">
-                <Label className="flex items-center gap-2 cursor-pointer">
-                  <Checkbox checked={rememberMe} onCheckedChange={setRememberMe} disabled={isLoading} />
-                  <span className="text-sm text-muted-foreground">Remember me</span>
-                </Label>
-                <a href="/forgot-password" className="text-sm text-primary hover:underline">
+                <div className="flex items-center space-x-2">
+                  <Checkbox id="remember" checked={rememberMe} onCheckedChange={setRememberMe} disabled={isLoading} />
+                  <Label htmlFor="remember" className="text-sm font-normal cursor-pointer">
+                    Remember me
+                  </Label>
+                </div>
+                <a href="#" className="text-sm text-primary hover:underline">
                   Forgot Password?
                 </a>
               </div>
@@ -164,15 +162,18 @@ export default function LoginPage() {
               </Button>
             </form>
 
-            <div className="mt-6 pt-6 border-t text-center text-sm text-muted-foreground">
-              <p>Demo credentials: <code className="bg-muted px-1 rounded">transit123</code> for all roles</p>
-              <p className="mt-1">Fleet Manager: fleet@transitops.in</p>
-              <p className="mt-1">Dispatcher: dispatch@transitops.in</p>
-              <p className="mt-1">Safety Officer: safety@transitops.in</p>
-              <p className="mt-1">Financial Analyst: finance@transitops.in</p>
+            <div className="pt-4 border-t">
+              <p className="text-xs text-muted-foreground text-center">
+                Demo credentials: <br />
+                <strong>fleet@transitops.in</strong> / transit123 (Fleet Manager)
+              </p>
             </div>
           </CardContent>
         </Card>
+
+        <p className="text-center text-xs text-muted-foreground mt-6">
+          Odoo Hackathon 2026 &copy; TransitOps
+        </p>
       </div>
     </div>
   );
