@@ -122,10 +122,10 @@ const config: Config = {
       spacing: {
         margin: "24px",
         gutter: "16px",
-        sidebar_width: "64px",
-        sidebar_width_expanded: "240px",
-        header_height: "56px",
-        container_gap: "12px",
+        "sidebar-width": "64px",
+        "sidebar-width-expanded": "240px",
+        "header-height": "56px",
+        "container-gap": "12px",
       },
       fontFamily: {
         sans: ["var(--font-inter)"],
