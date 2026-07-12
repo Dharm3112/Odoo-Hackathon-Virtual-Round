@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Eye, EyeOff, Loader2, Truck, AlertCircle } from "lucide-react";
+import { Eye, EyeOff, Loader2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,10 +14,10 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { cn } from "@/lib/utils";
 
 const ROLES = [
-  "Fleet Manager",
-  "Dispatcher",
-  "Safety Officer",
-  "Financial Analyst",
+  { name: "Fleet Manager", icon: "account_tree" },
+  { name: "Dispatcher", icon: "navigation" },
+  { name: "Safety Officer", icon: "verified_user" },
+  { name: "Financial Analyst", icon: "pie_chart" },
 ] as const;
 
 export default function LoginPage() {
@@ -28,36 +28,17 @@ export default function LoginPage() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState<typeof ROLES[number]>("Fleet Manager");
+  const [role, setRole] = useState<typeof ROLES[number]>(ROLES[0]);
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [formError, setFormError] = useState("");
-  const [passwordStrength, setPasswordStrength] = useState<{ score: number; label: string }>({ score: 0, label: "" });
-
-  const validatePassword = (pwd: string) => {
-    let score = 0;
-    if (pwd.length >= 8) score++;
-    if (/[A-Z]/.test(pwd)) score++;
-    if (/[0-9]/.test(pwd)) score++;
-    if (/[^A-Za-z0-9]/.test(pwd)) score++;
-    
-    const labels = ["Very Weak", "Weak", "Fair", "Strong", "Very Strong"];
-    return { score, label: labels[Math.min(score, 4)] };
-  };
-
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setPassword(value);
-    setPasswordStrength(validatePassword(value));
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setFormError("");
 
-    // Client-side validation
     if (!email || !email.includes("@")) {
       setFormError("Please enter a valid email address");
       setIsLoading(false);
@@ -80,13 +61,12 @@ export default function LoginPage() {
       const result = await signIn("credentials", {
         email,
         password,
-        role,
+        role: role.name,
         rememberMe: rememberMe.toString(),
         redirect: false,
       });
 
       if (result?.error) {
-        // Check for specific error messages
         if (result.error.includes("locked")) {
           setFormError(result.error);
         } else if (result.error.includes("role")) {
@@ -105,152 +85,128 @@ export default function LoginPage() {
     }
   };
 
-  const getStrengthColor = (score: number) => {
-    if (score <= 1) return "bg-red-500";
-    if (score <= 2) return "bg-yellow-500";
-    if (score <= 3) return "bg-blue-500";
-    return "bg-green-500";
-  };
-
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-background to-accent/5 px-4">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 text-primary mb-4">
-            <Truck className="w-8 h-8" />
+    <div className="min-h-screen bg-[#0e0e0e] text-[#e5e2e1] font-sans antialiased overflow-hidden">
+      <main className="flex flex-col md:flex-row min-h-screen w-full">
+        {/* Left Pane: Branding & Info */}
+        <section className="w-full md:w-1/2 bg-[#000000] flex flex-col justify-center p-8 md:p-16 lg:p-24 relative overflow-hidden hidden md:block">
+          <div className="relative z-10 max-w-lg mx-auto md:mx-0 w-full h-full flex flex-col justify-center gap-12">
+            {/* Logo & Tagline */}
+            <div>
+              <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight text-white mb-4" style={{ letterSpacing: "-0.04em" }}>
+                TransitOps
+              </h1>
+              <p className="text-lg text-[#c4c7c8] font-normal">Smart Transport Operations Platform</p>
+            </div>
+            {/* Roles List */}
+            <div className="flex flex-col gap-6 w-full max-w-sm mt-8">
+              {ROLES.map((r) => (
+                <div key={r.name} className="flex items-center gap-4 py-3 border-b border-[#353534]">
+                  <span className="material-symbols-outlined text-[#8e9192]" style={{ fontSize: "28px" }}>
+                    {r.icon}
+                  </span>
+                  <span className="text-lg text-[#8e9192] font-normal">{r.name}</span>
+                </div>
+              ))}
+            </div>
           </div>
-          <h1 className="text-3xl font-heading font-bold text-foreground">TransitOps</h1>
-          <p className="text-muted-foreground mt-1">Smart Transport Operations Platform</p>
-        </div>
+        </section>
 
-        <Card className="glass shadow-xl">
-          <CardHeader className="text-center pb-2">
-            <CardTitle className="text-2xl">Sign In</CardTitle>
-            <p className="text-muted-foreground text-sm">Enter your credentials to access your dashboard</p>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {(error || formError) && (
-              <Alert variant="destructive" className="text-sm">
-                <AlertCircle className="w-4 h-4" />
-                <AlertTitle>Error</AlertTitle>
-                <AlertDescription>{formError || "Invalid email or password. Please try again."}</AlertDescription>
-              </Alert>
-            )}
+        {/* Right Pane: Authentication Form */}
+        <section className="w-full md:w-1/2 bg-[#0a0a0a] flex flex-col items-center justify-center p-8 md:p-16 relative">
+          {/* Form Container - Glass/Elevated Look */}
+          <div className="w-full max-w-md bg-[#131313] border border-[#353534] rounded-xl p-8 shadow-2xl relative z-10 backdrop-blur-xl bg-opacity-80">
+            <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+              {(error || formError) && (
+                <Alert variant="destructive" className="text-sm bg-red-900/30 border-red-800 text-red-200">
+                  <AlertCircle className="w-4 h-4" />
+                  <AlertTitle>Error</AlertTitle>
+                  <AlertDescription>{formError || "Invalid email or password. Please try again."}</AlertDescription>
+                </Alert>
+              )}
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="name@transitops.in"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  autoComplete="email"
-                  disabled={isLoading}
-                />
+              {/* Email Field */}
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="email" className="text-sm font-medium text-[#e5e2e1]">
+                  Email
+                </Label>
+                <div className="relative">
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    autoComplete="email"
+                    disabled={isLoading}
+                    className="bg-[#181818] border-[#353534] text-[#e5e2e1] placeholder:text-[#444748] focus:border-white focus:ring-0 transition-colors"
+                  />
+                </div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+              {/* Password Field */}
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="password" className="text-sm font-medium text-[#e5e2e1]">
+                  Password
+                </Label>
                 <div className="relative">
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
-                    placeholder="Enter your password"
+                    placeholder="Password"
                     value={password}
-                    onChange={handlePasswordChange}
+                    onChange={(e) => setPassword(e.target.value)}
                     required
                     autoComplete="current-password"
                     disabled={isLoading}
-                    className="pr-10"
+                    className="bg-[#181818] border-[#353534] text-[#e5e2e1] placeholder:text-[#444748] focus:border-white focus:ring-0 transition-colors pr-10"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8e9192] hover:text-white transition-colors"
                     aria-label={showPassword ? "Hide password" : "Show password"}
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
-                {password && (
-                  <div className="space-y-1">
-                    <div className="h-1.5 bg-muted rounded-full overflow-hidden">
-                      <div
-                        className={cn(
-                          "h-full transition-all duration-300",
-                          getStrengthColor(passwordStrength.score)
-                        )}
-                        style={{ width: `${(passwordStrength.score / 4) * 100}%` }}
-                      />
-                    </div>
-                    <p className="text-xs text-muted-foreground">
-                      Strength: {passwordStrength.label}
-                    </p>
-                  </div>
-                )}
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="role">Role</Label>
-                <Select value={role} onValueChange={(v) => setRole(v as typeof ROLES[number])} disabled={isLoading}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select your role" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {ROLES.map((r) => (
-                      <SelectItem key={r} value={r}>
-                        {r}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
+              {/* Utilities (Remember Me & Forgot Password) */}
+              <div className="flex items-center justify-between mt-2">
+                <Label className="flex items-center gap-2 cursor-pointer group">
                   <Checkbox
                     id="remember"
                     checked={rememberMe}
                     onCheckedChange={setRememberMe}
                     disabled={isLoading}
+                    className="w-4 h-4 rounded-sm bg-[#181818] border-[#353534] text-white focus:ring-0 focus:ring-offset-0 data-[state=checked]:bg-white data-[state=checked]:border-white transition-colors cursor-pointer"
                   />
-                  <Label htmlFor="remember" className="text-sm font-normal cursor-pointer">
-                    Remember me (7 days)
-                  </Label>
-                </div>
-                <a href="#" className="text-sm text-primary hover:underline">
-                  Forgot Password?
+                  <span className="text-sm text-[#c4c7c8] group-hover:text-[#e5e2e1] transition-colors">
+                    Remember me
+                  </span>
+                </Label>
+                <a href="#" className="text-sm text-[#8e9192] hover:text-white transition-colors underline decoration-[#444748] hover:decoration-white underline-offset-4">
+                  Forgot password?
                 </a>
               </div>
 
-              <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
+              {/* Submit Button */}
+              <Button type="submit" className="w-full bg-[#393939] hover:bg-[#4a4a4a] text-white font-medium py-3 px-4 rounded transition-colors duration-200 flex items-center justify-center gap-2" disabled={isLoading}>
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Signing in...
+                    Authenticating...
                   </>
                 ) : (
-                  "Sign In"
+                  "Authenticate"
                 )}
               </Button>
             </form>
-
-            <div className="pt-4 border-t">
-              <p className="text-xs text-muted-foreground text-center">
-                Demo credentials: <br />
-                <strong>fleet@transitops.in</strong> / transit123 (Fleet Manager)
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <p className="text-center text-xs text-muted-foreground mt-6">
-          Odoo Hackathon 2026 &copy; TransitOps
-        </p>
-      </div>
+          </div>
+        </section>
+      </main>
     </div>
   );
 }

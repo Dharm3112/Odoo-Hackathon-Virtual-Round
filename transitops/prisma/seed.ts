@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 async function main() {
   console.log("🌱 Seeding database...");
 
-  const passwordHash = await bcrypt.hash("transit123", 12);
+  const passwordHash = await bcrypt.hash("Transit123!", 12);
 
   const roles = await Promise.all([
     prisma.role.upsert({
@@ -880,7 +880,7 @@ async function main() {
   console.log("✅ Database seeded successfully!");
   console.log(`📋 Created:`);
   console.log(`   - ${roles.length} roles`);
-  console.log(`   - ${users.length} users (password: transit123)`);
+  console.log(`   - ${users.length} users (password: Transit123!)`);
   console.log(`   - ${vehicles.length} vehicles`);
   console.log(`   - ${drivers.length} drivers`);
   console.log(`   - ${trips.length} trips`);

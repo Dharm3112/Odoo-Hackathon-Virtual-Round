@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -95,23 +96,25 @@ export function TopBar() {
               }
             />
             <DropdownMenuContent align="end" className="w-56 bg-surface-container-high border border-outline-variant text-on-surface">
-              <DropdownMenuLabel className="font-normal">
-                <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium leading-none text-primary">{user?.name || "TransitOps User"}</p>
-                  <p className="text-xs leading-none text-outline">{user?.email}</p>
-                  <p className="text-xs leading-none text-status-blue font-medium mt-1">
-                    {user?.role || "Operator"}
-                  </p>
-                </div>
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator className="bg-outline-variant/30" />
-              <DropdownMenuItem
-                onClick={() => signOut({ callbackUrl: "/login" })}
-                className="text-destructive focus:text-destructive focus:bg-destructive/10 cursor-pointer"
-              >
-                <span className="material-symbols-outlined text-[18px] mr-2">logout</span>
-                Sign Out
-              </DropdownMenuItem>
+              <DropdownMenuGroup>
+                <DropdownMenuLabel className="font-normal">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none text-primary">{user?.name || "TransitOps User"}</p>
+                    <p className="text-xs leading-none text-outline">{user?.email}</p>
+                    <p className="text-xs leading-none text-status-blue font-medium mt-1">
+                      {user?.role || "Operator"}
+                    </p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator className="bg-outline-variant/30" />
+                <DropdownMenuItem
+                  onClick={() => signOut({ callbackUrl: "/login" })}
+                  className="text-destructive focus:text-destructive focus:bg-destructive/10 cursor-pointer"
+                >
+                  <span className="material-symbols-outlined text-[18px] mr-2">logout</span>
+                  Sign Out
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
