@@ -16,8 +16,8 @@ export async function getAllVehicles(filters?: {
   if (filters?.region) where.region = filters.region;
   if (filters?.search) {
     where.OR = [
-      { registrationNumber: { contains: filters.search, mode: "insensitive" } },
-      { nameModel: { contains: filters.search, mode: "insensitive" } },
+      { registrationNumber: { contains: filters.search } },
+      { nameModel: { contains: filters.search } },
     ];
   }
 

@@ -79,7 +79,7 @@ export function VehicleTable({ vehicles, onEdit, onRetire, canManage }: VehicleT
               className="pl-9"
             />
           </div>
-          <Select value={typeFilter} onValueChange={setTypeFilter}>
+          <Select value={typeFilter} onValueChange={(val) => setTypeFilter(val || "")}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="All Types" />
             </SelectTrigger>
@@ -92,7 +92,7 @@ export function VehicleTable({ vehicles, onEdit, onRetire, canManage }: VehicleT
               ))}
             </SelectContent>
           </Select>
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
+          <Select value={statusFilter} onValueChange={(val) => setStatusFilter(val || "")}>
             <SelectTrigger className="w-[160px]">
               <SelectValue placeholder="All Statuses" />
             </SelectTrigger>
@@ -109,12 +109,14 @@ export function VehicleTable({ vehicles, onEdit, onRetire, canManage }: VehicleT
 
         {canManage && (
           <Dialog>
-            <DialogTrigger asChild>
-              <Button className="gap-2">
-                <Plus className="w-4 h-4" />
-                Add Vehicle
-              </Button>
-            </DialogTrigger>
+            <DialogTrigger
+              render={
+                <Button className="gap-2">
+                  <Plus className="w-4 h-4" />
+                  Add Vehicle
+                </Button>
+              }
+            />
             <DialogContent className="max-w-2xl">
               <DialogHeader>
                 <DialogTitle>Add New Vehicle</DialogTitle>

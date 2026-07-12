@@ -43,7 +43,7 @@ interface DriverFormModalProps {
     id: number;
     name: string;
     licenseNumber: string;
-    licenseCategory: string;
+    licenseCategory: "LMV" | "HMV" | "HGV";
     licenseExpiry: string;
     contactNumber: string;
     safetyScore: number;
@@ -61,12 +61,12 @@ export function DriverFormModal({ initialData, open, onOpenChange, onSubmit }: D
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
 
-  const form = useForm<DriverFormData>({
+  const form = useForm({
     resolver: zodResolver(driverSchema),
     defaultValues: {
       name: initialData?.name || "",
       licenseNumber: initialData?.licenseNumber || "",
-      licenseCategory: initialData?.licenseCategory || "LMV",
+      licenseCategory: (initialData?.licenseCategory as "LMV" | "HMV" | "HGV" | undefined) || "LMV",
       licenseExpiry: initialData?.licenseExpiry || "",
       contactNumber: initialData?.contactNumber || "",
       safetyScore: initialData?.safetyScore || 100,
@@ -168,7 +168,8 @@ export function DriverFormModal({ initialData, open, onOpenChange, onSubmit }: D
             <div className="space-y-2">
               <Label htmlFor="licenseExpiry">License Expiry *</Label>
               <Popover>
-                <PopoverTrigger asChild>
+              <PopoverTrigger
+                render={
                   <Button
                     variant="outline"
                     className={cn(
@@ -183,13 +184,13 @@ export function DriverFormModal({ initialData, open, onOpenChange, onSubmit }: D
                       : "Select date"}
                     <AlertTriangle className="w-4 h-4 ml-auto opacity-0 group-hover:opacity-100" />
                   </Button>
-                </PopoverTrigger>
+                }
+              />
                 <PopoverContent className="w-auto p-0" align="start">
                   <CalendarIcon
                     mode="single"
                     selected={form.watch("licenseExpiry") ? new Date(form.watch("licenseExpiry")) : undefined}
                     onSelect={(date) => date && form.setValue("licenseExpiry", date.toISOString().split("T")[0])}
-                    initialFocus
                     disabled={isSubmitting}
                   />
                 </PopoverContent>

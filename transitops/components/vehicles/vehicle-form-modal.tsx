@@ -32,7 +32,7 @@ const vehicleSchema = z.object({
     .max(15, "Max 15 characters")
     .regex(/^[A-Z0-9-]+$/i, "Only alphanumeric characters and hyphens allowed"),
   nameModel: z.string().min(1, "Vehicle name/model is required").max(50, "Max 50 characters"),
-  type: z.enum(VEHICLE_TYPES as [string, ...string[]]),
+  type: z.enum(VEHICLE_TYPES as unknown as [string, ...string[]]),
   maxLoadCapacity: z.coerce.number().positive("Must be greater than 0").max(50000, "Max 50,000 kg"),
   odometer: z.coerce.number().nonnegative("Cannot be negative").optional().default(0),
   acquisitionCost: z.coerce.number().nonnegative("Cannot be negative").optional().default(0),
@@ -53,28 +53,55 @@ interface VehicleFormModalProps {
     region?: string | null;
     status: string;
   } | null;
-  onSuccess: () => void;
-  onClose: () => void;
+  onSuccess?: () => void;
+  onClose?: () => void;
   isOpen?: boolean;
+
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  vehicle?: any;
+  onSubmit?: () => void;
 }
 
-export function VehicleFormModal({ initialData, onSuccess, onClose, isOpen = true }: VehicleFormModalProps) {
-  const isEditing = !!initialData;
+export function VehicleFormModal({
+  initialData: propInitialData,
+  onSuccess,
+  onClose,
+  isOpen = true,
+  open,
+  onOpenChange,
+  vehicle,
+  onSubmit: propOnSubmit,
+}: VehicleFormModalProps) {
+  const actualOpen = open !== undefined ? open : isOpen;
+  const actualInitialData = vehicle !== undefined ? vehicle : propInitialData;
+  const isEditing = !!actualInitialData;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
 
-  const form = useForm<VehicleFormData>({
+  const form = useForm({
     resolver: zodResolver(vehicleSchema),
     defaultValues: {
-      registrationNumber: initialData?.registrationNumber || "",
-      nameModel: initialData?.nameModel || "",
-      type: initialData?.type || VEHICLE_TYPES[0],
-      maxLoadCapacity: initialData?.maxLoadCapacity || 1000,
-      odometer: initialData?.odometer || 0,
-      acquisitionCost: initialData?.acquisitionCost || 0,
-      region: initialData?.region || "",
+      registrationNumber: actualInitialData?.registrationNumber || "",
+      nameModel: actualInitialData?.nameModel || "",
+      type: actualInitialData?.type || VEHICLE_TYPES[0],
+      maxLoadCapacity: actualInitialData?.maxLoadCapacity || 1000,
+      odometer: actualInitialData?.odometer || 0,
+      acquisitionCost: actualInitialData?.acquisitionCost || 0,
+      region: actualInitialData?.region || "",
     },
   });
+
+  const handleClose = () => {
+    if (onOpenChange) onOpenChange(false);
+    if (onClose) onClose();
+  };
+
+  const handleSuccess = () => {
+    if (propOnSubmit) propOnSubmit();
+    if (onSuccess) onSuccess();
+  };
 
   const onSubmit = async (data: VehicleFormData) => {
     setIsSubmitting(true);
@@ -82,7 +109,7 @@ export function VehicleFormModal({ initialData, onSuccess, onClose, isOpen = tru
 
     try {
       const url = isEditing
-        ? `/api/vehicles/${initialData!.id}`
+        ? `/api/vehicles/${actualInitialData!.id}`
         : "/api/vehicles";
       const method = isEditing ? "PUT" : "POST";
 
@@ -97,8 +124,8 @@ export function VehicleFormModal({ initialData, onSuccess, onClose, isOpen = tru
         throw new Error(err.error || "Failed to save vehicle");
       }
 
-      onSuccess();
-      onClose();
+      handleSuccess();
+      handleClose();
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
@@ -106,10 +133,10 @@ export function VehicleFormModal({ initialData, onSuccess, onClose, isOpen = tru
     }
   };
 
-  if (!isOpen) return null;
+  if (!actualOpen) return null;
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={actualOpen} onOpenChange={handleClose}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
@@ -215,7 +242,7 @@ export function VehicleFormModal({ initialData, onSuccess, onClose, isOpen = tru
           </div>
 
           <DialogFooter className="gap-2">
-            <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
+            <Button type="button" variant="outline" onClick={handleClose} disabled={isSubmitting}>
               <X className="w-4 h-4 mr-2" />
               Cancel
             </Button>

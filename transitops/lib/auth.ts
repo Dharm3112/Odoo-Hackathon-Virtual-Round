@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
@@ -56,20 +57,21 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id;
-        token.role = user.role;
-        token.roleId = user.roleId;
-        token.permissions = user.permissions;
+        const u = user as any;
+        token.id = u.id;
+        token.role = u.role;
+        token.roleId = u.roleId;
+        token.permissions = u.permissions;
       }
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
-        session.user.id = token.id;
-        session.user.role = token.role;
-        session.user.roleId = token.roleId;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (session.user as any).permissions = token.permissions;
+        const sUser = session.user as any;
+        sUser.id = token.id;
+        sUser.role = token.role;
+        sUser.roleId = token.roleId;
+        sUser.permissions = token.permissions;
       }
       return session;
     },

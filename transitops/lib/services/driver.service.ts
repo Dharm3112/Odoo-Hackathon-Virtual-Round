@@ -12,8 +12,8 @@ export async function getAllDrivers(filters?: {
   if (filters?.status) where.status = filters.status;
   if (filters?.search) {
     where.OR = [
-      { name: { contains: filters.search, mode: "insensitive" } },
-      { licenseNumber: { contains: filters.search, mode: "insensitive" } },
+      { name: { contains: filters.search } },
+      { licenseNumber: { contains: filters.search } },
     ];
   }
 

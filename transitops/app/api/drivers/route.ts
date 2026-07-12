@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
 import { getAllDrivers, createDriver, checkLicenseUnique } from "@/lib/services/driver.service";
 import { createDriverSchema } from "@/lib/validations/driver.schema";
 

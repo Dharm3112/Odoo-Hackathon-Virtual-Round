@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
 import { getVehicleById, updateVehicle } from "@/lib/services/vehicle.service";
 import { updateVehicleSchema } from "@/lib/validations/vehicle.schema";
 
@@ -26,6 +25,7 @@ export async function PUT(
   const session = await getServerSession(authOptions);
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const userRole = (session.user as any).role;
   if (userRole !== "Fleet Manager") {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -35,9 +35,6 @@ export async function PUT(
   const body = await request.json();
   const validated = updateVehicleSchema.parse(body);
 
-  // Prevent status change through this endpoint
-  const { status: _status, ...updateData } = validated;
-
-  const vehicle = await updateVehicle(parseInt(id), updateData);
+  const vehicle = await updateVehicle(parseInt(id), validated);
   return NextResponse.json(vehicle);
 }

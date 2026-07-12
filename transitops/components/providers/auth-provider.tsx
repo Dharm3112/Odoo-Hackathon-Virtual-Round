@@ -24,9 +24,12 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { data: session, status } = useSession();
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const u = session?.user as any;
+
   const hasPermission = (module: Module, requiredLevel: "full" | "view" = "full"): boolean => {
-    if (!session?.user) return false;
-    const role = session.user.role as string;
+    if (!u) return false;
+    const role = u.role as string;
     const perms = ROLE_PERMISSIONS[role];
     if (!perms) return false;
     
@@ -35,8 +38,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return userLevel === "full" || userLevel === "view";
   };
 
-  const visibleModules = (session?.user?.role 
-    ? Object.entries(ROLE_PERMISSIONS[session.user.role as string])
+  const visibleModules = (u?.role 
+    ? Object.entries(ROLE_PERMISSIONS[u.role as string])
         .filter(([, perm]) => perm !== "none")
         .map(([module]) => module as Module)
     : []) as Module[];
@@ -49,13 +52,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   return (
     <AuthContext.Provider
       value={{
-        user: session?.user
+        user: u
           ? {
-              id: session.user.id,
-              email: session.user.email!,
-              name: session.user.name!,
-              role: session.user.role!,
-              permissions: session.user.permissions as Record<Module, "full" | "view" | "none">,
+              id: u.id,
+              email: u.email!,
+              name: u.name!,
+              role: u.role!,
+              permissions: u.permissions as Record<Module, "full" | "view" | "none">,
             }
           : null,
         isLoading: status === "loading",

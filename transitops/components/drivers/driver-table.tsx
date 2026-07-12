@@ -84,7 +84,7 @@ export function DriverTable({ drivers, onEdit, onSuspend, onReinstate, canManage
               className="pl-9"
             />
           </div>
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
+          <Select value={statusFilter} onValueChange={(val) => setStatusFilter(val || "")}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="All Statuses" />
             </SelectTrigger>
@@ -166,11 +166,13 @@ export function DriverTable({ drivers, onEdit, onSuspend, onReinstate, canManage
                   {canManage && (
                     <TableCell className="text-right">
                       <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="h-8 w-8">
-                            <MoreVertical className="w-4 h-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
+                        <DropdownMenuTrigger
+                          render={
+                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                              <MoreVertical className="w-4 h-4" />
+                            </Button>
+                          }
+                        />
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem onClick={() => onEdit?.(driver)}>
                             <Edit className="w-4 h-4 mr-2" />
@@ -207,7 +209,8 @@ export function DriverTable({ drivers, onEdit, onSuspend, onReinstate, canManage
       <DriverFormModal
         open={showModal}
         onOpenChange={setShowModal}
-        initialData={editingDriver}
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        initialData={editingDriver as any}
         onSubmit={async () => { setShowModal(false); setEditingDriver(null); }}
       />
     </div>

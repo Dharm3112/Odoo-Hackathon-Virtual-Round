@@ -72,26 +72,28 @@ export function TopBar() {
           
           {/* User Profile */}
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <div className="flex items-center gap-2 ml-2 cursor-pointer group select-none">
-                <Avatar className="w-8 h-8 rounded-full bg-surface-variant flex items-center justify-center border border-outline-variant group-hover:border-outline transition-colors overflow-hidden">
-                  <AvatarFallback className="bg-surface-variant text-outline text-[14px]">
-                    {user?.name?.charAt(0).toUpperCase() || "U"}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="hidden xl:flex flex-col">
-                  <span className="font-label-sm text-label-sm text-on-surface text-left">
-                    {user?.name || "TransitOps User"}
-                  </span>
-                  <span className="text-[10px] text-outline-variant text-left leading-none mt-0.5">
-                    {user?.role || "Operator"}
+            <DropdownMenuTrigger
+              render={
+                <div className="flex items-center gap-2 ml-2 cursor-pointer group select-none">
+                  <Avatar className="w-8 h-8 rounded-full bg-surface-variant flex items-center justify-center border border-outline-variant group-hover:border-outline transition-colors overflow-hidden">
+                    <AvatarFallback className="bg-surface-variant text-outline text-[14px]">
+                      {user?.name?.charAt(0).toUpperCase() || "U"}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="hidden xl:flex flex-col">
+                    <span className="font-label-sm text-label-sm text-on-surface text-left">
+                      {user?.name || "TransitOps User"}
+                    </span>
+                    <span className="text-[10px] text-outline-variant text-left leading-none mt-0.5">
+                      {user?.role || "Operator"}
+                    </span>
+                  </div>
+                  <span className="material-symbols-outlined text-outline-variant text-[16px] hidden md:block">
+                    arrow_drop_down
                   </span>
                 </div>
-                <span className="material-symbols-outlined text-outline-variant text-[16px] hidden md:block">
-                  arrow_drop_down
-                </span>
-              </div>
-            </DropdownMenuTrigger>
+              }
+            />
             <DropdownMenuContent align="end" className="w-56 bg-surface-container-high border border-outline-variant text-on-surface">
               <DropdownMenuLabel className="font-normal">
                 <div className="flex flex-col space-y-1">
