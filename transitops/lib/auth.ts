@@ -25,7 +25,7 @@ export const authOptions: NextAuthOptions = {
         role: { label: "Role", type: "text" },
         rememberMe: { label: "Remember Me", type: "checkbox" },
       },
-      async authorize(credentials, req) {
+      async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
           throw new Error("Invalid credentials");
         }
@@ -69,6 +69,14 @@ export const authOptions: NextAuthOptions = {
           data: { lastLogin: new Date() },
         });
 
+        // Parse permissions from JSON string
+        let permissions: Record<string, string> = {};
+        try {
+          permissions = JSON.parse(user.role.permissions);
+        } catch {
+          permissions = {};
+        }
+
         // Calculate session maxAge based on rememberMe
         const rememberMe = credentials.rememberMe === "true";
         const maxAge = rememberMe ? 60 * 60 * 24 * 7 : 60 * 60; // 7 days or 1 hour
@@ -79,7 +87,7 @@ export const authOptions: NextAuthOptions = {
           name: user.fullName,
           role: user.role.name,
           roleId: user.roleId,
-          permissions: user.role.permissions,
+          permissions,
           rememberMe,
           maxAge,
         };

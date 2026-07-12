@@ -14,7 +14,7 @@ export default function UnauthorizedPage() {
         </div>
         <h1 className="text-3xl font-heading font-bold text-foreground mb-2">Access Denied</h1>
         <p className="text-muted-foreground mb-6">
-          You don't have permission to access this page. Your role doesn't include access to this module.
+          You don&apos;t have permission to access this page. Your role doesn&apos;t include access to this module.
         </p>
 
         <Card className="glass">
@@ -38,17 +38,17 @@ export default function UnauthorizedPage() {
         </Card>
 
         <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
-          <Button variant="default" asChild>
-            <Link href="/">
-              <ArrowLeft className="w-4 h-4 mr-2" />
+          <Link href="/">
+            <Button variant="default" className="gap-2">
+              <ArrowLeft className="w-4 h-4" />
               Back to Dashboard
-            </Link>
-          </Button>
-          <Button variant="outline" asChild>
-            <Link href="/login">
+            </Button>
+          </Link>
+          <Link href="/login">
+            <Button variant="outline">
               Sign Out
-            </Link>
-          </Button>
+            </Button>
+          </Link>
         </div>
       </div>
     </div>
