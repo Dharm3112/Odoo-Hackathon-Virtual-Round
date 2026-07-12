@@ -3,9 +3,7 @@ import { z } from "zod";
 export const loginSchema = z.object({
   email: z.string().email("Invalid email format").min(1, "Email is required"),
   password: z.string().min(1, "Password is required"),
-  role: z.enum(["Fleet Manager", "Dispatcher", "Safety Officer", "Financial Analyst"], {
-    errorMap: () => ({ message: "Please select a role" }),
-  }),
+  role: z.enum(["Fleet Manager", "Dispatcher", "Safety Officer", "Financial Analyst"], "Please select a role"),
   rememberMe: z.boolean().optional(),
 });
 

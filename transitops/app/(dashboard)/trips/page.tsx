@@ -2,150 +2,277 @@
 
 import { useState } from "react";
 
+interface Driver {
+  id: string;
+  name: string;
+  status: string;
+}
+
+interface Vehicle {
+  id: string;
+  name: string;
+  status: string;
+  capacity: number;
+}
+
 export default function TripsPage() {
-  const [step, setStep] = useState(1);
+  const [formData, setFormData] = useState({
+    source: "",
+    destination: "",
+    driverId: "",
+    vehicleId: "",
+    cargoWeight: "",
+  });
+
+  const drivers: Driver[] = [
+    { id: "d1", name: "John Doe", status: "Enabled" },
+    { id: "d2", name: "Michael Smith", status: "In Shop" },
+    { id: "d3", name: "Jane Smith", status: "Suspended" },
+    { id: "d4", name: "Sarah Connor", status: "Enabled" },
+  ];
+
+  const vehicles: Vehicle[] = [
+    { id: "v1", name: "Truck 102 (Semi)", status: "Enabled", capacity: 50000 },
+    { id: "v2", name: "Van 45 (Sprinter)", status: "Enabled", capacity: 2000 },
+    { id: "v3", name: "Truck 105 (Semi)", status: "In Shop", capacity: 45000 },
+    { id: "v4", name: "Truck 201 (Flatbed)", status: "Maintenance", capacity: 30000 },
+  ];
+
+  const selectedVehicle = vehicles.find(v => v.id === formData.vehicleId);
+  const cargoWeight = parseInt(formData.cargoWeight) || 0;
+  const weightError = selectedVehicle && cargoWeight > selectedVehicle.capacity;
+
+  const isFormValid =
+    formData.source.trim() &&
+    formData.destination.trim() &&
+    formData.driverId &&
+    formData.vehicleId &&
+    formData.cargoWeight.trim() &&
+    !weightError;
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (isFormValid) {
+      console.log("Trip dispatched:", formData);
+      alert("Trip dispatched successfully!");
+    }
+  };
+
+  const selectedDriver = drivers.find(d => d.id === formData.driverId);
 
   return (
-    <div className="flex flex-col gap-margin max-w-[1600px] w-full mx-auto">
-      <div className="flex items-center justify-between">
-        <h1 className="font-headline-md text-headline-md text-primary">Trip Dispatcher</h1>
-        <button className="text-outline hover:text-primary transition-colors flex items-center gap-1">
-          <span className="material-symbols-outlined text-[18px]">history</span>
-          <span className="font-label-md text-label-md">View History</span>
-        </button>
+    <div className="max-w-7xl mx-auto">
+      {/* Page Header */}
+      <div className="mb-8">
+        <h1 className="font-headline-lg text-headline-lg text-primary mb-2">Trip Dispatcher</h1>
+        <p className="font-body-md text-body-md text-outline">Configure and deploy new transit routes.</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-margin">
-        {/* Left Column: Form / Stepper */}
-        <div className="lg:col-span-2 flex flex-col gap-6">
-          {/* Stepper Header */}
-          <div className="flex items-center justify-between border-b border-surface-variant pb-4">
-            <div className={`flex flex-col items-center gap-2 ${step >= 1 ? 'text-primary' : 'text-outline-variant'}`}>
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center font-label-md ${step >= 1 ? 'bg-primary text-background' : 'bg-surface-variant text-outline'}`}>1</div>
-              <span className="font-label-sm uppercase tracking-wider hidden sm:block">Details</span>
-            </div>
-            <div className={`h-[1px] flex-1 mx-4 ${step >= 2 ? 'bg-primary' : 'bg-surface-variant'}`}></div>
-            
-            <div className={`flex flex-col items-center gap-2 ${step >= 2 ? 'text-primary' : 'text-outline-variant'}`}>
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center font-label-md ${step >= 2 ? 'bg-primary text-background' : 'bg-surface-variant text-outline'}`}>2</div>
-              <span className="font-label-sm uppercase tracking-wider hidden sm:block">Assign</span>
-            </div>
-            <div className={`h-[1px] flex-1 mx-4 ${step >= 3 ? 'bg-primary' : 'bg-surface-variant'}`}></div>
-            
-            <div className={`flex flex-col items-center gap-2 ${step >= 3 ? 'text-primary' : 'text-outline-variant'}`}>
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center font-label-md ${step >= 3 ? 'bg-primary text-background' : 'bg-surface-variant text-outline'}`}>3</div>
-              <span className="font-label-sm uppercase tracking-wider hidden sm:block">Review</span>
-            </div>
-          </div>
-
-          {/* Form Content */}
-          <div className="bg-surface-container border border-outline-variant rounded-lg p-6">
-            {step === 1 && (
-              <div className="flex flex-col gap-6 animate-in fade-in duration-300">
-                <h2 className="font-headline-sm text-headline-sm text-primary">Trip Details</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="flex flex-col gap-1.5">
-                    <label className="font-label-md text-label-md text-on-surface">Origin</label>
-                    <input type="text" placeholder="e.g. Warehouse A" className="w-full bg-surface-container-low border border-outline-variant rounded px-3 py-2 text-on-surface text-body-sm focus:outline-none focus:border-primary placeholder:text-outline-variant" />
+      <div className="flex flex-col xl:flex-row gap-margin">
+        {/* Left Column: Create Trip Form */}
+        <div className="w-full xl:w-5/12">
+          <div className="bg-surface-dim rounded-xl border border-outline-variant p-6 h-full">
+            <h2 className="font-headline-sm text-headline-sm text-primary mb-6">Create Trip</h2>
+            <form onSubmit={handleSubmit} className="space-y-5">
+              {/* Source */}
+              <div>
+                <label className="block font-label-md text-label-md text-on-surface-variant mb-2">Source</label>
+                <input
+                  className="w-full bg-[#181818] border border-[#333333] rounded-lg px-4 py-2.5 font-body-md text-body-md text-primary placeholder-outline-variant focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
+                  placeholder="e.g., Warehouse A"
+                  type="text"
+                  value={formData.source}
+                  onChange={(e) => setFormData({ ...formData, source: e.target.value })}
+                />
+              </div>
+              {/* Destination */}
+              <div>
+                <label className="block font-label-md text-label-md text-on-surface-variant mb-2">Destination</label>
+                <input
+                  className="w-full bg-[#181818] border border-[#333333] rounded-lg px-4 py-2.5 font-body-md text-body-md text-primary placeholder-outline-variant focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
+                  placeholder="e.g., Distribution Center B"
+                  type="text"
+                  value={formData.destination}
+                  onChange={(e) => setFormData({ ...formData, destination: e.target.value })}
+                />
+              </div>
+              {/* Driver Selection */}
+              <div>
+                <label className="block font-label-md text-label-md text-on-surface-variant mb-2">Driver</label>
+                <div className="relative">
+                  <select
+                    className="w-full bg-[#181818] border border-[#333333] rounded-lg px-4 py-2.5 font-body-md text-body-md text-primary appearance-none focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors cursor-pointer"
+                    value={formData.driverId}
+                    onChange={(e) => setFormData({ ...formData, driverId: e.target.value })}
+                  >
+                    <option className="text-outline-variant" disabled value="">Select a Driver</option>
+                    {drivers.map((d) => (
+                      <option
+                        key={d.id}
+                        className={d.status === "Enabled" ? "text-primary" : "text-outline"}
+                        disabled={d.status !== "Enabled"}
+                        value={d.id}
+                      >
+                        {d.status}: {d.name}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none text-outline-variant">
+                    <span className="material-symbols-outlined">expand_more</span>
                   </div>
-                  <div className="flex flex-col gap-1.5">
-                    <label className="font-label-md text-label-md text-on-surface">Destination</label>
-                    <input type="text" placeholder="e.g. Port Terminal 3" className="w-full bg-surface-container-low border border-outline-variant rounded px-3 py-2 text-on-surface text-body-sm focus:outline-none focus:border-primary placeholder:text-outline-variant" />
-                  </div>
-                </div>
-                <div className="flex justify-end mt-4">
-                  <button onClick={() => setStep(2)} className="bg-primary text-background font-label-md text-label-md px-6 py-2 rounded hover:bg-surface-tint transition-colors">
-                    Next Step
-                  </button>
                 </div>
               </div>
-            )}
-            
-            {step === 2 && (
-              <div className="flex flex-col gap-6 animate-in fade-in duration-300">
-                <h2 className="font-headline-sm text-headline-sm text-primary">Assign Vehicle & Driver</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="flex flex-col gap-1.5">
-                    <label className="font-label-md text-label-md text-on-surface">Select Vehicle</label>
-                    <select className="w-full bg-surface-container-low border border-outline-variant rounded px-3 py-2 text-on-surface text-body-sm focus:outline-none focus:border-primary appearance-none">
-                      <option value="">Choose a vehicle...</option>
-                      <option value="v1">TRK-12 (Available)</option>
-                      <option value="v2">VAN-03 (Available)</option>
-                    </select>
+              {/* Vehicle Selection */}
+              <div>
+                <label className="block font-label-md text-label-md text-on-surface-variant mb-2">Vehicle</label>
+                <div className="relative">
+                  <select
+                    className="w-full bg-[#181818] border border-[#333333] rounded-lg px-4 py-2.5 font-body-md text-body-md text-primary appearance-none focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors cursor-pointer"
+                    value={formData.vehicleId}
+                    onChange={(e) => setFormData({ ...formData, vehicleId: e.target.value })}
+                  >
+                    <option disabled value="">Select a Vehicle</option>
+                    {vehicles.map((v) => (
+                      <option
+                        key={v.id}
+                        className={v.status === "Enabled" ? "text-primary" : "text-outline"}
+                        disabled={v.status !== "Enabled"}
+                        value={v.id}
+                      >
+                        {v.status}: {v.name}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none text-outline-variant">
+                    <span className="material-symbols-outlined">expand_more</span>
                   </div>
-                  <div className="flex flex-col gap-1.5">
-                    <label className="font-label-md text-label-md text-on-surface">Select Driver</label>
-                    <select className="w-full bg-surface-container-low border border-outline-variant rounded px-3 py-2 text-on-surface text-body-sm focus:outline-none focus:border-primary appearance-none">
-                      <option value="">Choose a driver...</option>
-                      <option value="d1">Sarah Connor (Available)</option>
-                      <option value="d2">Alex Johnson (Available)</option>
-                    </select>
-                  </div>
-                </div>
-                <div className="flex justify-between mt-4">
-                  <button onClick={() => setStep(1)} className="border border-outline-variant text-on-surface font-label-md text-label-md px-6 py-2 rounded hover:bg-surface-container-highest transition-colors">
-                    Back
-                  </button>
-                  <button onClick={() => setStep(3)} className="bg-primary text-background font-label-md text-label-md px-6 py-2 rounded hover:bg-surface-tint transition-colors">
-                    Next Step
-                  </button>
                 </div>
               </div>
-            )}
-
-            {step === 3 && (
-              <div className="flex flex-col gap-6 animate-in fade-in duration-300">
-                <h2 className="font-headline-sm text-headline-sm text-primary">Review & Confirm</h2>
-                <div className="bg-surface-container-low border border-outline-variant rounded p-4 flex flex-col gap-3">
-                  <div className="flex justify-between border-b border-surface-variant pb-2">
-                    <span className="text-outline font-label-md text-label-md">Route</span>
-                    <span className="text-primary font-body-sm">Warehouse A → Port Terminal 3</span>
-                  </div>
-                  <div className="flex justify-between border-b border-surface-variant pb-2">
-                    <span className="text-outline font-label-md text-label-md">Assigned Vehicle</span>
-                    <span className="text-primary font-body-sm">TRK-12</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-outline font-label-md text-label-md">Assigned Driver</span>
-                    <span className="text-primary font-body-sm">Sarah Connor</span>
-                  </div>
-                </div>
-                <div className="flex justify-between mt-4">
-                  <button onClick={() => setStep(2)} className="border border-outline-variant text-on-surface font-label-md text-label-md px-6 py-2 rounded hover:bg-surface-container-highest transition-colors">
-                    Back
-                  </button>
-                  <button onClick={() => setStep(1)} className="bg-status-green text-background font-label-md text-label-md px-6 py-2 rounded hover:bg-status-green/90 transition-colors flex items-center gap-2">
-                    <span className="material-symbols-outlined text-[18px]">check</span>
+              {/* Cargo Weight */}
+              <div>
+                <label className="block font-label-md text-label-md text-on-surface-variant mb-2">Cargo Weight (kg)</label>
+                <input
+                  className={`w-full rounded-lg px-4 py-2.5 font-body-md text-body-md placeholder-outline-variant focus:outline-none focus:ring-1 transition-colors ${
+                    weightError
+                      ? "bg-[#2a1111] border border-error-container text-error focus:border-error focus:ring-error"
+                      : "bg-[#181818] border border-[#333333] text-primary focus:border-primary focus:ring-primary"
+                  }`}
+                  type="number"
+                  value={formData.cargoWeight}
+                  onChange={(e) => setFormData({ ...formData, cargoWeight: e.target.value })}
+                  placeholder="0"
+                />
+                {weightError && (
+                  <p className="mt-2 font-label-sm text-label-sm text-error">Error: Weight exceeds selected vehicle capacity.</p>
+                )}
+              </div>
+              {/* Submit Button */}
+              <div className="pt-4">
+                {isFormValid ? (
+                  <button
+                    type="submit"
+                    className="w-full bg-primary text-[#000000] font-label-md text-label-md py-3 rounded-lg hover:bg-surface-tint transition-colors"
+                  >
                     Dispatch Trip
                   </button>
-                </div>
+                ) : (
+                  <button
+                    type="button"
+                    disabled
+                    className="w-full bg-surface-variant text-outline font-label-md text-label-md py-3 rounded-lg border border-[#333333] cursor-not-allowed transition-colors"
+                  >
+                    Dispatch Trip
+                  </button>
+                )}
               </div>
-            )}
+            </form>
           </div>
         </div>
 
-        {/* Right Column: Live Map / Route Preview */}
-        <div className="lg:col-span-1">
-          <div className="bg-surface-container border border-outline-variant rounded-lg h-full min-h-[400px] flex flex-col overflow-hidden relative">
-            <div className="absolute top-4 left-4 z-10 bg-surface-container/80 backdrop-blur border border-outline-variant rounded px-3 py-1.5">
-              <span className="font-label-sm text-label-sm text-primary flex items-center gap-1">
-                <span className="w-2 h-2 rounded-full bg-status-green animate-pulse"></span>
-                Route Preview
-              </span>
-            </div>
-            {/* Simulated Map Background */}
-            <div className="flex-1 bg-[#1a1c1e] w-full h-full opacity-50 relative flex items-center justify-center border-b border-outline-variant">
-              <span className="material-symbols-outlined text-outline-variant text-[48px]">map</span>
-            </div>
-            
-            <div className="p-4 flex flex-col gap-2 bg-surface-container-low">
-              <div className="flex justify-between items-center">
-                <span className="font-label-sm text-label-sm text-outline uppercase">Est. Distance</span>
-                <span className="font-body-md text-body-md text-primary font-mono-data">45.2 km</span>
+        {/* Right Column: Trip Timeline */}
+        <div className="w-full xl:w-7/12">
+          <div className="bg-surface-dim rounded-xl border border-outline-variant p-6 h-full flex flex-col">
+            <h2 className="font-headline-sm text-headline-sm text-primary mb-8">Trip Timeline</h2>
+            {/* Stepper */}
+            <div className="flex items-center justify-between mb-10 w-full px-4">
+              {/* Draft (Active/Current) */}
+              <div className="flex flex-col items-center relative z-10 w-16">
+                <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center mb-2 shadow-[0_0_15px_rgba(255,255,255,0.2)]">
+                  <span className="material-symbols-outlined text-[#000000] icon-fill">draft</span>
+                </div>
+                <span className="font-label-sm text-label-sm text-primary text-center">Draft</span>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="font-label-sm text-label-sm text-outline uppercase">Est. Duration</span>
-                <span className="font-body-md text-body-md text-primary font-mono-data">1h 15m</span>
+              <div className="stepper-line active" style={{ flexGrow: 1, height: 2, backgroundColor: "#ffffff", margin: "0 12px" }}></div>
+              {/* Dispatched (Pending) */}
+              <div className="flex flex-col items-center relative z-10 w-16">
+                <div className="w-10 h-10 rounded-full bg-surface-variant border border-[#333333] flex items-center justify-center mb-2">
+                  <span className="material-symbols-outlined text-outline">local_shipping</span>
+                </div>
+                <span className="font-label-sm text-label-sm text-outline text-center">Dispatched</span>
+              </div>
+              <div className="stepper-line" style={{ flexGrow: 1, height: 2, backgroundColor: "#333333", margin: "0 12px" }}></div>
+              {/* Completed (Pending) */}
+              <div className="flex flex-col items-center relative z-10 w-16">
+                <div className="w-10 h-10 rounded-full bg-surface-variant border border-[#333333] flex items-center justify-center mb-2">
+                  <span className="material-symbols-outlined text-outline">check_circle</span>
+                </div>
+                <span className="font-label-sm text-label-sm text-outline text-center">Completed</span>
+              </div>
+              <div className="stepper-line" style={{ flexGrow: 1, height: 2, backgroundColor: "#333333", margin: "0 12px" }}></div>
+              {/* Cancelled (Pending/Inactive) */}
+              <div className="flex flex-col items-center relative z-10 w-16 opacity-50">
+                <div className="w-10 h-10 rounded-full bg-surface-variant border border-[#333333] flex items-center justify-center mb-2">
+                  <span className="material-symbols-outlined text-outline">block</span>
+                </div>
+                <span className="font-label-sm text-label-sm text-outline text-center">Cancelled</span>
+              </div>
+            </div>
+
+            {/* Trip Details Card */}
+            <div className="bg-surface rounded-lg p-5 border border-outline-variant flex-grow">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-6">
+                <div className="flex flex-col">
+                  <span className="font-label-sm text-label-sm text-outline-variant mb-1 uppercase tracking-wider">Draft Trip ID</span>
+                  <span className="font-mono-data text-mono-data text-primary">TR-23490-DRF</span>
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-label-sm text-label-sm text-outline-variant mb-1 uppercase tracking-wider">Status</span>
+                  <div className="inline-flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
+                    <span className="font-body-sm text-body-sm text-primary">Draft - Awaiting Details</span>
+                  </div>
+                </div>
+                <div className="col-span-1 md:col-span-2 border-t border-outline-variant my-2"></div>
+                <div className="flex flex-col">
+                  <span className="font-label-sm text-label-sm text-outline-variant mb-1 uppercase tracking-wider">Source</span>
+                  <span className="font-body-md text-body-md text-on-surface">{formData.source || "Warehouse A"}</span>
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-label-sm text-label-sm text-outline-variant mb-1 uppercase tracking-wider">Destination</span>
+                  <span className="font-body-md text-body-md text-on-surface">{formData.destination || "Distribution Center B"}</span>
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-label-sm text-label-sm text-outline-variant mb-1 uppercase tracking-wider">Assigned Driver</span>
+                  <span className="font-body-md text-body-md text-outline italic">
+                    {selectedDriver ? selectedDriver.name : "Not Selected"}
+                  </span>
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-label-sm text-label-sm text-outline-variant mb-1 uppercase tracking-wider">Assigned Vehicle</span>
+                  <span className="font-body-md text-body-md text-outline italic">
+                    {selectedVehicle ? selectedVehicle.name : "Not Selected"}
+                  </span>
+                </div>
+                <div className="col-span-1 md:col-span-2 mt-4">
+                  <div className="bg-surface-variant/50 rounded p-3 border border-outline-variant">
+                    <div className="flex items-start gap-3">
+                      <span className="material-symbols-outlined text-outline-variant mt-0.5 text-lg">info</span>
+                      <p className="font-body-sm text-body-sm text-on-surface-variant m-0">
+                        Complete all required fields in the creation form to generate route estimates and activate the dispatch sequence.
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

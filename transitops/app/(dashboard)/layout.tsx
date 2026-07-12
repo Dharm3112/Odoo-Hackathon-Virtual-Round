@@ -10,7 +10,7 @@ export default function DashboardLayout({
     <div className="min-h-screen bg-background overflow-x-hidden">
       <TopBar />
       <Sidebar />
-      <main className="flex-1 md:ml-sidebar-width-expanded pt-header-height p-margin min-h-screen min-w-0 transition-all duration-200">
+      <main className="flex-1 md:ml-sidebar-width lg:ml-sidebar-width-expanded mt-header-height min-h-screen min-w-0 p-4 pb-24 sm:p-margin md:pb-margin transition-all duration-200">
         {children}
       </main>
     </div>

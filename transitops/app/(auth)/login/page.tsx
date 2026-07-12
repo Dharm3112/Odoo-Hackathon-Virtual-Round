@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const ROLES = [
@@ -213,6 +212,33 @@ export default function LoginPage() {
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <Label className="text-sm font-medium text-[#e5e2e1]">Role</Label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {ROLES.map((r) => {
+                    const selected = role.name === r.name;
+                    return (
+                      <button
+                        key={r.name}
+                        type="button"
+                        onClick={() => setRole(r)}
+                        disabled={isLoading}
+                        className={`flex min-h-12 items-center gap-2 rounded-lg border px-3 text-left text-sm transition-colors ${
+                          selected
+                            ? "border-white bg-[#252525] text-white"
+                            : "border-[#353534] bg-[#181818] text-[#c4c7c8] hover:border-[#8e9192] hover:text-white"
+                        }`}
+                      >
+                        <span className={`material-symbols-outlined text-[20px] ${selected ? "icon-fill" : ""}`}>
+                          {r.icon}
+                        </span>
+                        <span className="truncate">{r.name}</span>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
