@@ -8,16 +8,18 @@ datasource db {
 }
 
 model User {
-  id           Int       @id @default(autoincrement())
-  email        String    @unique
-  passwordHash String    @map("password_hash")
-  fullName     String    @map("full_name")
-  roleId       Int       @map("role_id")
-  role         Role      @relation(fields: [roleId], references: [id])
-  createdAt    DateTime  @default(now()) @map("created_at")
-  lastLogin    DateTime? @map("last_login")
-  isActive     Boolean   @default(true) @map("is_active")
-  trips        Trip[]    @relation("CreatedBy")
+  id                   Int       @id @default(autoincrement())
+  email                String    @unique
+  passwordHash         String    @map("password_hash")
+  fullName             String    @map("full_name")
+  roleId               Int       @map("role_id")
+  role                 Role      @relation(fields: [roleId], references: [id])
+  createdAt            DateTime  @default(now()) @map("created_at")
+  lastLogin            DateTime? @map("last_login")
+  isActive             Boolean   @default(true) @map("is_active")
+  failedLoginAttempts  Int       @default(0) @map("failed_login_attempts")
+  lockedUntil          DateTime? @map("locked_until")
+  trips                Trip[]    @relation("CreatedBy")
 
   @@map("users")
 }

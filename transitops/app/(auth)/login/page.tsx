@@ -1,165 +1,255 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Eye, EyeOff, Loader2, Truck, AlertCircle, CheckCircle2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { cn } from "@/lib/utils";
+
+const ROLES = [
+  "Fleet Manager",
+  "Dispatcher",
+  "Safety Officer",
+  "Financial Analyst",
+] as const;
 
 export default function LoginPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl") || "/";
+  const error = searchParams.get("error");
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  const [role, setRole] = useState<typeof ROLES[number]>("Fleet Manager");
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
+  const [formError, setFormError] = useState("");
+  const [passwordStrength, setPasswordStrength] = useState<{ score: number; label: string }>({ score: 0, label: "" });
+
+  const validatePassword = (pwd: string) => {
+    let score = 0;
+    if (pwd.length >= 8) score++;
+    if (/[A-Z]/.test(pwd)) score++;
+    if (/[0-9]/.test(pwd)) score++;
+    if (/[^A-Za-z0-9]/.test(pwd)) score++;
+    
+    const labels = ["Very Weak", "Weak", "Fair", "Strong", "Very Strong"];
+    return { score, label: labels[Math.min(score, 4)] };
+  };
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setPassword(value);
+    setPasswordStrength(validatePassword(value));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError(null);
+    setFormError("");
+
+    // Client-side validation
+    if (!email || !email.includes("@")) {
+      setFormError("Please enter a valid email address");
+      setIsLoading(false);
+      return;
+    }
+
+    if (password.length < 8) {
+      setFormError("Password must be at least 8 characters");
+      setIsLoading(false);
+      return;
+    }
+
+    if (!/[A-Z]/.test(password) || !/[0-9]/.test(password) || !/[^A-Za-z0-9]/.test(password)) {
+      setFormError("Password must contain uppercase, number, and special character");
+      setIsLoading(false);
+      return;
+    }
 
     try {
       const result = await signIn("credentials", {
         email,
         password,
+        role,
+        rememberMe: rememberMe.toString(),
         redirect: false,
       });
 
       if (result?.error) {
-        setError("Invalid email or password");
+        // Check for specific error messages
+        if (result.error.includes("locked")) {
+          setFormError(result.error);
+        } else if (result.error.includes("role")) {
+          setFormError("Invalid role selected for this account");
+        } else {
+          setFormError("Invalid email or password. Please try again.");
+        }
       } else {
-        router.push("/dashboard");
+        router.push(callbackUrl);
         router.refresh();
       }
     } catch {
-      setError("An unexpected error occurred. Please try again.");
+      setFormError("An unexpected error occurred. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
 
+  const getStrengthColor = (score: number) => {
+    if (score <= 1) return "bg-red-500";
+    if (score <= 2) return "bg-yellow-500";
+    if (score <= 3) return "bg-blue-500";
+    return "bg-green-500";
+  };
+
   return (
-    <div className="flex min-h-screen bg-background">
-      {/* Left Column: Login Form */}
-      <div className="w-full lg:w-[480px] shrink-0 flex flex-col p-8 lg:p-12 xl:p-16 relative z-10 bg-background border-r border-outline-variant">
-        <div className="flex items-center gap-2 mb-16 lg:mb-24">
-          <span className="material-symbols-outlined text-primary text-2xl icon-fill">
-            alt_route
-          </span>
-          <span className="font-headline-sm text-headline-sm font-bold tracking-tight text-primary">
-            TransitOps
-          </span>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-background to-accent/5 px-4">
+      <div className="w-full max-w-md">
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 text-primary mb-4">
+            <Truck className="w-8 h-8" />
+          </div>
+          <h1 className="text-3xl font-heading font-bold text-foreground">TransitOps</h1>
+          <p className="text-muted-foreground mt-1">Smart Transport Operations Platform</p>
         </div>
 
-        <div className="flex-1 flex flex-col justify-center">
-          <h1 className="font-headline-lg text-headline-lg mb-2 text-primary">Welcome back</h1>
-          <p className="font-body-md text-body-md text-on-surface-variant mb-8 lg:mb-10">
-            Sign in to access the TransitOps command center.
-          </p>
-
-          <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
-            {error && (
-              <div className="bg-red-500/10 border border-red-500/30 text-red-500 font-body-sm text-body-sm px-4 py-2.5 rounded-md">
-                {error}
-              </div>
+        <Card className="glass shadow-xl">
+          <CardHeader className="text-center pb-2">
+            <CardTitle className="text-2xl">Sign In</CardTitle>
+            <p className="text-muted-foreground text-sm">Enter your credentials to access your dashboard</p>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {(error || formError) && (
+              <Alert variant="destructive" className="text-sm">
+                <AlertCircle className="w-4 h-4" />
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>{formError || "Invalid email or password. Please try again."}</AlertDescription>
+              </Alert>
             )}
 
-            <div className="flex flex-col gap-1.5">
-              <label className="font-label-md text-label-md text-on-surface">Email</label>
-              <input
-                type="email"
-                placeholder="name@company.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-surface-container-low border border-outline-variant rounded-md px-4 py-3 text-on-surface font-body-md text-body-md focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors placeholder:text-outline-variant"
-                required
-                disabled={isLoading}
-              />
-            </div>
-
-            <div className="flex flex-col gap-1.5">
-              <div className="flex items-center justify-between">
-                <label className="font-label-md text-label-md text-on-surface">Password</label>
-                <Link
-                  href="#"
-                  className="font-label-sm text-label-sm text-outline hover:text-primary transition-colors"
-                >
-                  Forgot password?
-                </Link>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="name@transitops.in"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  autoComplete="email"
+                  disabled={isLoading}
+                />
               </div>
-              <input
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-surface-container-low border border-outline-variant rounded-md px-4 py-3 text-on-surface font-body-md text-body-md focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors placeholder:text-outline-variant"
-                required
-                disabled={isLoading}
-              />
+
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Enter your password"
+                    value={password}
+                    onChange={handlePasswordChange}
+                    required
+                    autoComplete="current-password"
+                    disabled={isLoading}
+                    className="pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+                {password && (
+                  <div className="space-y-1">
+                    <div className="h-1.5 bg-muted rounded-full overflow-hidden">
+                      <div
+                        className={cn(
+                          "h-full transition-all duration-300",
+                          getStrengthColor(passwordStrength.score)
+                        )}
+                        style={{ width: `${(passwordStrength.score / 4) * 100}%` }}
+                      />
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Strength: {passwordStrength.label}
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="role">Role</Label>
+                <Select value={role} onValueChange={(v) => setRole(v as typeof ROLES[number])} disabled={isLoading}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select your role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {ROLES.map((r) => (
+                      <SelectItem key={r} value={r}>
+                        {r}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    id="remember"
+                    checked={rememberMe}
+                    onCheckedChange={setRememberMe}
+                    disabled={isLoading}
+                  />
+                  <Label htmlFor="remember" className="text-sm font-normal cursor-pointer">
+                    Remember me (7 days)
+                  </Label>
+                </div>
+                <a href="#" className="text-sm text-primary hover:underline">
+                  Forgot Password?
+                </a>
+              </div>
+
+              <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Signing in...
+                  </>
+                ) : (
+                  "Sign In"
+                )}
+              </Button>
+            </form>
+
+            <div className="pt-4 border-t">
+              <p className="text-xs text-muted-foreground text-center">
+                Demo credentials: <br />
+                <strong>fleet@transitops.in</strong> / transit123 (Fleet Manager)
+              </p>
             </div>
+          </CardContent>
+        </Card>
 
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="mt-4 w-full bg-primary text-background font-label-md text-label-md py-3.5 rounded-md hover:bg-surface-tint transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isLoading ? "Signing In..." : "Sign In"}
-            </button>
-          </form>
-        </div>
-
-        <div className="mt-auto pt-8 font-label-sm text-label-sm text-outline-variant text-center lg:text-left">
-          &copy; 2024 TransitOps Ltd.
-        </div>
-      </div>
-
-      {/* Right Column: Graphic/Info (Hidden on small screens) */}
-      <div className="hidden lg:flex flex-1 relative bg-surface-dim overflow-hidden flex-col justify-between p-12 xl:p-20">
-        <div className="relative z-10 max-w-2xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-outline-variant bg-surface-container-low/50 backdrop-blur-md mb-6">
-            <span className="w-2 h-2 rounded-full bg-status-green animate-pulse"></span>
-            <span className="font-label-sm text-label-sm text-on-surface">Systems Operational</span>
-          </div>
-          <h2 className="font-headline-lg text-[40px] leading-[1.1] tracking-tight text-primary mb-6">
-            Enterprise Fleet<br />Intelligence
-          </h2>
-          <p className="font-body-lg text-body-lg text-on-surface-variant max-w-md">
-            Centralized routing, dispatch, and maintenance. Monitor your entire operations network in real-time.
-          </p>
-        </div>
-
-        {/* Abstract UI Elements Decoration */}
-        <div className="relative z-10 w-full max-w-lg self-end mt-12 grid grid-cols-2 gap-4">
-          <div className="glass p-5 rounded-lg flex flex-col gap-2">
-            <span className="font-label-sm text-label-sm text-outline uppercase">Active Trips</span>
-            <div className="flex items-end gap-3">
-              <span className="font-headline-lg text-headline-lg text-primary font-mono-data">248</span>
-              <span className="font-label-sm text-label-sm text-status-green mb-1">+12%</span>
-            </div>
-            <div className="h-1 w-full bg-surface-container-highest rounded-full overflow-hidden mt-1">
-              <div className="h-full w-3/4 bg-primary"></div>
-            </div>
-          </div>
-
-          <div className="glass p-5 rounded-lg flex flex-col gap-2">
-            <span className="font-label-sm text-label-sm text-outline uppercase">Fleet Health</span>
-            <div className="flex items-end gap-3">
-              <span className="font-headline-lg text-headline-lg text-primary font-mono-data">94.2%</span>
-            </div>
-            <div className="h-1 w-full bg-surface-container-highest rounded-full overflow-hidden mt-1">
-              <div className="h-full w-[94%] bg-status-green"></div>
-            </div>
-          </div>
-        </div>
-
-        {/* Background decorative elements */}
-        <div className="absolute top-[-10%] right-[-5%] w-[800px] h-[800px] rounded-full bg-surface-container-highest/20 blur-[100px] pointer-events-none"></div>
-        <div className="absolute bottom-[-20%] left-[10%] w-[600px] h-[600px] rounded-full bg-surface-container-high/30 blur-[80px] pointer-events-none"></div>
-        
-        {/* Grid pattern overlay */}
-        <div 
-          className="absolute inset-0 pointer-events-none opacity-10"
-          style={{ backgroundImage: "radial-gradient(var(--on-surface-variant) 1px, transparent 1px)", backgroundSize: "24px 24px" }}
-        ></div>
+        <p className="text-center text-xs text-muted-foreground mt-6">
+          Odoo Hackathon 2026 &copy; TransitOps
+        </p>
       </div>
     </div>
   );

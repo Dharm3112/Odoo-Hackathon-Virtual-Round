@@ -6,7 +6,7 @@ export async function POST() {
   const session = await getServerSession(authOptions);
   
   if (session) {
-    // Session will be cleared client-side by next-auth
+    // The session will be cleared client-side by next-auth
   }
   
   return NextResponse.json({ success: true });
