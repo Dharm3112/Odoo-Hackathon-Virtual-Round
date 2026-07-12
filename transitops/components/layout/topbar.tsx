@@ -59,7 +59,7 @@ export function TopBar() {
             <Link
               href="/"
               aria-label="TransitOps home"
-              className="flex min-w-0 items-center gap-2 rounded-lg px-1.5 py-1 transition-colors hover:bg-surface-container-highest"
+              className="flex min-w-0 items-center gap-2 rounded-lg px-1.5 py-1 transition-colors hover:bg-surface-container-highest md:hidden"
               onClick={closeMobile}
             >
               <span className="material-symbols-outlined text-primary text-2xl icon-fill">alt_route</span>
